@@ -33,8 +33,9 @@ SRC_BASS2 = "NASA PSI · BASS-II · PSI-25_Experimental table_BASS-II.csv (datos
 MAX_TESTS = 20
 
 # Paleta Wari / retablo ayacuchano
-CYAN, GOLD, MAGENTA, GREEN, RED = "#00D9FF", "#F5B700", "#E63E8B", "#3DDC97", "#FF5A4F"
-BG, CARD, LINE = "#080D1B", "#152238", "#24344F"
+# Paleta neutra aportada por Wari Teams: blanco, gris pizarra, negro, carbón y gris cálido.
+CYAN, GOLD, MAGENTA, GREEN, RED = "#333232", "#4D4B4B", "#4D4B4B", "#333232", "#4D4B4B"
+BG, CARD, LINE = "#FFFFFF", "#F3F1F0", "#BAB7B6"
 
 st.set_page_config(
     page_title="WARI FIRE AI",
@@ -46,33 +47,43 @@ st.set_page_config(
 st.markdown(
     f"""
 <style>
-.block-container {{ padding-top: 1.4rem; max-width: 1300px; }}
-.hero {{
-    background: linear-gradient(120deg, {BG} 0%, #10244a 55%, #1b3d6e 100%);
-    border: 1px solid {LINE}; border-left: 6px solid {GOLD};
-    border-radius: 16px; padding: 24px 30px; margin-bottom: 18px;
-}}
-.hero h1 {{ margin:0; font-size:2rem; color:#fff; letter-spacing:.03em; }}
-.hero p  {{ margin:6px 0 0; color:#b9cbe6; }}
-.kpi {{ background:{CARD}; border:1px solid {LINE}; border-radius:14px; padding:14px 18px; }}
-.kpi .l {{ color:#8fa3c4; font-size:.74rem; text-transform:uppercase; letter-spacing:.07em; }}
-.kpi .v {{ color:#fff; font-size:1.7rem; font-weight:700; line-height:1.25; }}
-.chip {{ display:inline-block; padding:3px 11px; border-radius:999px; font-size:.78rem;
-        font-weight:700; margin-right:6px; border:1px solid; }}
-.chip.dato   {{ color:{CYAN};    border-color:{CYAN};    background:rgba(0,217,255,.08); }}
-.chip.calc   {{ color:{GOLD};    border-color:{GOLD};    background:rgba(245,183,0,.08); }}
-.chip.interp {{ color:{GREEN};   border-color:{GREEN};   background:rgba(61,220,151,.08); }}
-.chip.extra  {{ color:{MAGENTA}; border-color:{MAGENTA}; background:rgba(230,62,139,.08); }}
-.chip.nd     {{ color:#9aa7bd;   border-color:#9aa7bd;   background:rgba(154,167,189,.08); }}
-.source {{ color:#8fa3c4; font-size:.8rem; margin-top:-6px; }}
-.warn {{ background:rgba(245,183,0,.08); border:1px solid {GOLD}; border-radius:12px;
-        padding:12px 16px; color:#ffe8a3; }}
-div[data-testid="stSidebar"] {{ border-right:1px solid {LINE}; }}
-footer, #MainMenu {{ visibility:hidden; }}
+/* Diseño accesible y sobrio: la información manda sobre la decoración. */
+.block-container {{ padding-top: 1.5rem; max-width: 1220px; padding-bottom: 3rem; }}
+.hero {{ background:#333232; color:#FFFFFF; border: 1px solid #4D4B4B;
+    border-radius:20px; padding:26px 30px; margin-bottom:22px; }}
+.hero h1 {{ color:#FFFFFF!important; margin:0 0 8px; font-size:clamp(1.5rem,3vw,2.5rem); }}
+.hero p {{ color:#F1EEEC!important; margin:0; font-size:1.03rem; line-height:1.6; }}
+.hero .eyebrow {{ color:#DCD8D5; font-size:.75rem; letter-spacing:.12em; font-weight:700; }}
+.kpi {{ background:#F3F1F0; border:1px solid #BAB7B6; border-radius:14px; padding:16px; min-height:88px; }}
+.kpi .l {{ color:#4D4B4B; font-size:.77rem; font-weight:650; text-transform:uppercase; }}
+.kpi .v {{ color:#000000; font-size:1.55rem; font-weight:750; overflow-wrap:anywhere; }}
+.chip {{ display:inline-block; padding:4px 10px; margin:0 5px 5px 0; border-radius:8px;
+    font-size:.77rem; font-weight:650; border:1px solid #BAB7B6; background:#F3F1F0; color:#333232; }}
+.source {{ color:#4D4B4B; font-size:.86rem; margin:8px 0; }}
+.warn {{ background:#EEEAE8; border-left:4px solid #4D4B4B; border-radius:10px;
+         padding:14px 16px; color:#222!important; }}
+.wari-guide {{ background:#F3F1F0; border:1px solid #BAB7B6; border-radius:14px;
+               padding:18px 20px; margin:12px 0 20px; color:#111; line-height:1.65; }}
+.wari-guide strong {{ color:#000; }}
+[data-testid="stSidebar"] {{ border-right:1px solid #BAB7B6; background:#F3F1F0; }}
+[data-testid="stAppViewContainer"] {{ background:#FFFFFF; }}
+[data-testid="stMetricValue"], [data-testid="stMetricLabel"] {{ color:#111; }}
+/* No ocultar los mensajes de Streamlit ni el menú de accesibilidad. */
 </style>
 """,
     unsafe_allow_html=True,
 )
+
+
+def guide(title, description, steps):
+    """Ayuda visible sin depender de estados o documentación externa."""
+    from html import escape
+    content = "".join(f"<li>{escape(step)}</li>" for step in steps)
+    st.markdown(
+        f'<div class="wari-guide"><strong>{escape(title)}</strong><p>{escape(description)}</p>'
+        f'<ol>{content}</ol></div>', unsafe_allow_html=True
+    )
+
 
 
 # ----------------------------------------------------------------------------
@@ -92,11 +103,14 @@ def show_df(df, **kwargs):
 
 def show_plot(fig):
     fig.update_layout(
-        template="plotly_dark",
-        paper_bgcolor="rgba(0,0,0,0)",
-        plot_bgcolor="rgba(0,0,0,0)",
+        template="plotly_white",
+        paper_bgcolor="#FFFFFF",
+        plot_bgcolor="#FFFFFF",
         margin=dict(l=10, r=10, t=50, b=10),
         legend=dict(orientation="h", y=1.12, x=0),
+        font=dict(color="#000000"),
+        xaxis=dict(gridcolor="#E8E5E3", linecolor="#BAB7B6"),
+        yaxis=dict(gridcolor="#E8E5E3", linecolor="#BAB7B6"),
     )
     try:
         st.plotly_chart(fig, width="stretch")
@@ -279,9 +293,10 @@ with st.sidebar:
 st.markdown(
     """
 <div class="hero">
-  <h1>🔥 WARI FIRE AI</h1>
-  <p>Organiza, compara e interpreta investigaciones de combustión en microgravedad de NASA PSI,
-  con fuentes verificables y límites científicos explícitos.</p>
+  <div class="eyebrow">WARI TEAMS · NASA SPACE APPS CHALLENGE 2026</div>
+  <h1>WARI FIRE AI</h1>
+  <p>De los datos de combustión en microgravedad a comparaciones claras y verificables.
+  Explora investigaciones NASA PSI, consulta mediciones BASS-II y reconoce sus límites científicos.</p>
 </div>
 """,
     unsafe_allow_html=True,
@@ -298,7 +313,15 @@ if page.startswith("🏠"):
     kpi(c4, "Hallazgos de calidad", len(qc) if bass is not None else "—")
 
     st.write("")
-    st.info("Esta versión es un analizador documental y estadístico; todavía NO incluye IA generativa pública ni pronóstico de incendios.")
+    st.markdown("### ¿Qué es WARI FIRE AI?")
+    st.write("WARI FIRE AI organiza estudios de combustión en microgravedad y permite consultar una tabla experimental BASS-II, visualizar O₂, CO₂ y CO y contrastar dos ensayos sin inventar mediciones. Está pensado para estudiantes e investigadores que necesitan localizar evidencia sobre prevención, detección y supresión de incendios en entornos espaciales.")
+    guide("Empieza aquí · recorrido en cuatro pasos",
+          "No necesitas conocimientos de programación para explorar los datos.",
+          ["Biblioteca: busca BASS, SAME o FLEX y abre la fuente original.",
+           "Explorador: elige una variable y hasta veinte ensayos para ver las barras inicial/final.",
+           "Comparación científica: selecciona dos ensayos y revisa las coincidencias y diferencias.",
+           "Metodología: comprueba qué datos se midieron, qué se calculó y qué no puede concluirse."])
+    st.info("Alcance: analizador de datos y documentos. Esta versión todavía no tiene IA generativa pública ni predice incendios.")
     st.markdown("#### Cómo usar la plataforma")
     st.markdown(
         """
@@ -321,6 +344,8 @@ if page.startswith("🏠"):
 # ============================================================================
 elif page.startswith("📚"):
     st.subheader("Biblioteca científica NASA PSI")
+    guide("Cómo usar la biblioteca", "Busca investigaciones según su aplicación en seguridad contra incendios.",
+          ["Escribe BASS, SAME o FLEX.", "Filtra por área o combustible.", "Abre el vínculo del documento para contrastar la descripción."])
     if catalog is None:
         st.error("No se encontró `data/investigaciones.csv`.")
     else:
@@ -353,6 +378,9 @@ elif page.startswith("📚"):
 # ============================================================================
 elif page.startswith("📈"):
     st.subheader("Explorador BASS-II")
+    guide("Cómo leer los gráficos", "Cada barra corresponde a la lectura inicial o final registrada para un ensayo.",
+          ["Filtra por investigador o material desde el panel lateral.", "Selecciona O₂, CO₂ o CO y hasta 20 ensayos.",
+           "Revisa la ficha del ensayo y las alertas de calidad antes de interpretar una diferencia."])
     if bass is None:
         st.error("No se encontró `data/bass_ii_experimental.csv`.")
         st.stop()
@@ -494,6 +522,9 @@ elif page.startswith("📈"):
 # ============================================================================
 elif page.startswith("⚖️"):
     st.subheader("WARI Scientific Comparison")
+    guide("Comparar dos ensayos", "La comparación describe lo que está registrado; no atribuye causas.",
+          ["Elige un ensayo A y otro B.", "Comprueba qué variables están registradas en ambos.",
+           "Lee las diferencias aritméticas y las limitaciones científicas."])
     st.caption("Compara dos ensayos y separa lo respaldado de lo que no se puede concluir.")
     if bass is None:
         st.error("No se encontró `data/bass_ii_experimental.csv`.")
@@ -582,6 +613,10 @@ elif page.startswith("⚖️"):
 # ============================================================================
 elif page.startswith("🛰️"):
     st.subheader("Módulo de seguridad espacial")
+    guide("Explora un escenario", "Esta sección relaciona estudios con escenarios; no simula un incendio.",
+          ["Escoge estación orbital, hábitat lunar o hábitat marciano.",
+           "Consulta estudios por prevención, detección y supresión.",
+           "Lee el aviso de extrapolación antes de comunicar conclusiones."])
     esc = st.selectbox(
         "Escenario",
         ["Hábitat lunar", "Estación espacial en órbita (microgravedad)", "Hábitat marciano"],
@@ -625,6 +660,10 @@ elif page.startswith("🛰️"):
 # ============================================================================
 else:
     st.subheader("Metodología y límites")
+    guide("Cómo comprobar nuestros resultados", "La trazabilidad es la base de una interpretación responsable.",
+          ["Identifica el archivo NASA PSI en cada análisis.",
+           "Distingue datos originales de operaciones calculadas.",
+           "Consulta las alertas y confirma valores dudosos con la documentación."])
     st.markdown("**Clasificación de la información**")
     chips("dato")
     st.caption("Medición registrada en un archivo original de NASA PSI.")
