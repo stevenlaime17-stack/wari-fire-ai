@@ -3,7 +3,10 @@ import pandas as pd
 import streamlit as st
 
 BASE = Path(__file__).resolve().parent
-CSV = BASE / 'data' / 'investigaciones.csv'
+CATALOG = BASE / 'data' / 'investigaciones.csv'
+BASS = BASE / 'data' / 'bass_ii_experimental.csv'
+SOURCE = 'https://www.nasa.gov/physical-sciences-informatics-psi/psi-investigations-by-research-area/'
+
 st.set_page_config(page_title='WARI FIRE AI | Wari Teams', page_icon='🔥', layout='wide')
 st.markdown('''<style>
 .stApp {background:#07101e;color:#e6f2ff}
@@ -13,90 +16,155 @@ h1,h2,h3 {color:#62def7 !important}
 </style>''', unsafe_allow_html=True)
 
 logo = BASE / 'assets' / 'logo.png'
-left, right = st.columns([1, 4], vertical_alignment='center')
-with left:
-    if logo.exists(): st.image(str(logo), width=160)
-with right:
+col_logo, col_title = st.columns([1, 4], vertical_alignment='center')
+with col_logo:
+    if logo.exists():
+        st.image(str(logo), width=160)
+with col_title:
     st.title('WARI FIRE AI')
     st.markdown('**Wari Teams · Ayacucho, Perú · NASA Space Apps Challenge 2026**')
     st.caption('Microgravity Combustion Intelligence Platform')
 
-st.info('Biblioteca científica en construcción. El catálogo contiene descripciones y enlaces; aún no incluye mediciones originales de NASA PSI ni IA remota.')
+@st.cache_data
+def load_catalog():
+    if not CATALOG.exists():
+        return None, 'Falta data/investigaciones.csv.'
+    try:
+        df = pd.read_csv(CATALOG, encoding='utf-8-sig', dtype=str).fillna('')
+    except Exception as e:
+        return None, f'Error leyendo el catálogo: {e}'
+    df.columns = df.columns.str.strip().str.lower()
+    needed = ['experimento','area','combustible','descripcion','fuente']
+    missing = [x for x in needed if x not in df.columns]
+    if missing:
+        return None, 'Faltan columnas en el catálogo: ' + ', '.join(missing)
+    return df[needed], None
 
 @st.cache_data
-
-def cargar_catalogo():
-    if not CSV.is_file():
-        return None, 'No existe data/investigaciones.csv en GitHub.'
+def load_bass():
+    if not BASS.exists():
+        return None, 'Falta data/bass_ii_experimental.csv.'
     try:
-        tabla = pd.read_csv(CSV, encoding='utf-8-sig', dtype=str).fillna('')
-    except Exception as exc:
-        return None, f'No se pudo leer el CSV: {exc}'
-    tabla.columns = [str(c).strip().lower() for c in tabla.columns]
-    obligatorias = ['experimento', 'area', 'combustible', 'descripcion', 'fuente']
-    faltantes = [c for c in obligatorias if c not in tabla.columns]
-    if faltantes:
-        return None, 'Faltan columnas: ' + ', '.join(faltantes)
-    tabla = tabla[obligatorias].copy()
-    for c in obligatorias:
-        tabla[c] = tabla[c].astype(str).str.strip()
-    return tabla, None
+        df = pd.read_csv(BASS, encoding='utf-8-sig', dtype=str, keep_default_na=False)
+    except Exception as e:
+        return None, f'No se pudo leer el CSV experimental: {e}'
+    df.columns = df.columns.str.strip()
+    expected = ['PI', 'Test #', 'Fuel Sample Material',
+                'Calibrated  initial O2 % by vol', 'Calibrated final O2 % by vol',
+                'Initial CO2 % by vol', 'Final CO2 % by vol',
+                'Initial CO (ppm)', 'Final CO (ppm)']
+    # Column naming is matched after trimming whitespace only.
+    missing = [c for c in expected if c not in df.columns]
+    if missing:
+        return None, 'Faltan encabezados del CSV original: ' + ', '.join(missing)
+    metrics = {
+        'Oxígeno (% vol.)': ('Calibrated  initial O2 % by vol', 'Calibrated final O2 % by vol', '% vol.'),
+        'CO₂ (% vol.)': ('Initial CO2 % by vol', 'Final CO2 % by vol', '% vol.'),
+        'CO (ppm)': ('Initial CO (ppm)', 'Final CO (ppm)', 'ppm'),
+    }
+    for before, after, unit in metrics.values():
+        df[before + '_num'] = pd.to_numeric(df[before].str.strip(), errors='coerce')
+        df[after + '_num'] = pd.to_numeric(df[after].str.strip(), errors='coerce')
+    return df, None
 
-catalogo, error = cargar_catalogo()
+catalog, error = load_catalog()
 if error:
     st.error(error)
-    st.caption('Revisa la ruta, los nombres de las columnas y que cada registro tenga cinco campos separados por comas.')
     st.stop()
 
-t1, t2, t3, t4 = st.tabs(['🔎 Explorador', '📚 Biblioteca NASA', '📊 Comparador', '🤖 WARI AI'])
+st.info('Fuente experimental añadida: tabla BASS-II PSI-25. Se muestran registros originales sin corregir valores atípicos; no se calculan riesgos de incendio ni velocidades de llama.')
+t1, t2, t3, t4 = st.tabs(['🔎 Explorador','📚 Biblioteca NASA','📊 Comparador experimental','🤖 WARI AI'])
+
 with t1:
     st.subheader('Explorador de investigaciones')
-    c1, c2 = st.columns([2, 1])
+    c1, c2 = st.columns([2,1])
     with c1:
-        q = st.text_input('Buscar experimento, combustible o descripción', placeholder='Ejemplo: BASS')
+        term = st.text_input('Buscar experimento, combustible o descripción', placeholder='BASS')
     with c2:
-        areas = ['Todas'] + sorted(x for x in catalogo['area'].unique() if x)
-        area = st.selectbox('Área de seguridad', areas)
-    filtro = catalogo.copy()
-    if area != 'Todas':
-        filtro = filtro[filtro['area'] == area]
-    if q.strip():
-        busqueda = filtro[['experimento', 'area', 'combustible', 'descripcion']].agg(' '.join, axis=1)
-        filtro = filtro[busqueda.str.contains(q.strip(), case=False, regex=False)]
-    st.metric('Investigaciones encontradas', len(filtro))
-    st.dataframe(filtro[['experimento', 'area', 'combustible', 'descripcion']], use_container_width=True, hide_index=True)
-    if filtro.empty:
-        st.warning('No se encontraron investigaciones con esos filtros.')
-    else:
-        st.markdown('#### Fichas con fuentes')
-        for i, r in filtro.iterrows():
-            with st.expander(f"{r['experimento']} · {r['area']}"):
-                st.write('**Combustible:**', r['combustible'])
-                st.write('**Descripción:**', r['descripcion'])
-                if r['fuente'].startswith(('https://', 'http://')):
-                    st.link_button('Abrir fuente NASA', r['fuente'])
-                else:
-                    st.warning('Esta investigación todavía no tiene un enlace válido.')
+        group = st.selectbox('Área de seguridad', ['Todas'] + sorted(x for x in catalog['area'].dropna().unique() if x))
+    filtered = catalog.copy()
+    if group != 'Todas':
+        filtered = filtered[filtered['area'] == group]
+    if term.strip():
+        text_search = filtered[['experimento','area','combustible','descripcion']].fillna('').agg(' '.join, axis=1)
+        filtered = filtered[text_search.str.contains(term.strip(), case=False, regex=False)]
+    st.metric('Investigaciones encontradas', len(filtered))
+    st.dataframe(filtered[['experimento','area','combustible','descripcion']], width='stretch', hide_index=True)
+    for n, r in filtered.iterrows():
+        with st.expander(f"{r['experimento']} · {r['area']}"):
+            st.write('**Combustible:**', r['combustible'])
+            st.write('**Descripción:**', r['descripcion'])
+            if str(r['fuente']).startswith(('https://','http://')):
+                st.link_button('Abrir fuente', r['fuente'])
+
 with t2:
-    st.subheader('Biblioteca NASA')
-    st.write('Fuentes de referencia asociadas al catálogo actual:')
-    for _, r in catalogo.iterrows():
-        st.markdown(f"**{r['experimento']}** — {r['descripcion']}")
-        if r['fuente'].startswith(('https://', 'http://')):
-            st.link_button(f"Consultar: {r['experimento']}", r['fuente'], key=f"source_{_}")
-    st.caption('Los enlaces no implican descarga ni lectura automática. Los resultados numéricos se incorporarán desde archivos NASA verificables.')
+    st.subheader('Biblioteca científica NASA')
+    st.write('Investigaciones del catálogo y sus referencias:')
+    for n, r in catalog.iterrows():
+        with st.expander(f"{r['experimento']} — {r['area']}"):
+            st.write(r['descripcion'])
+            if str(r['fuente']).startswith(('https://','http://')):
+                st.link_button('Abrir referencia', r['fuente'], key=f'catalog_{n}')
+    st.markdown('### Tabla experimental BASS-II (PSI-25)')
+    st.write('Datos aportados desde el archivo «PSI-25_Experimental table_BASS-II.csv»; se conservan los valores originales y los identificadores de ensayos.')
+    st.link_button('Catálogo oficial NASA PSI', SOURCE)
+    st.caption('El enlace al catálogo identifica la investigación, pero no sustituye la trazabilidad del archivo individual. Añade el enlace exacto de descarga o DOI verificado antes de la entrega final.')
+
 with t3:
-    st.subheader('Comparador científico')
-    st.warning('Todavía no tenemos ensayos con mediciones numéricas verificadas. No mostraremos gráficos inventados.')
-    opciones = catalogo['experimento'].tolist()
-    seleccion = st.multiselect('Selecciona investigaciones para comparar sus descripciones', opciones, default=opciones[:2])
-    if seleccion:
-        st.dataframe(catalogo[catalogo['experimento'].isin(seleccion)][['experimento', 'area', 'combustible', 'descripcion']], hide_index=True, use_container_width=True)
-    st.caption('Esto es una comparación descriptiva, no experimental. Más adelante añadiremos condiciones y resultados medidos por ensayo.')
+    st.subheader('BASS-II — Comparador de mediciones originales')
+    df, err = load_bass()
+    if err:
+        st.warning(err)
+        st.write('Sube el archivo CSV a la ruta **data/bass_ii_experimental.csv** en GitHub. No cambies sus encabezados ni valores.')
+    else:
+        a, b, c = st.columns(3)
+        a.metric('Ensayos cargados', len(df))
+        b.metric('Investigadores principales', df['PI'].nunique())
+        c.metric('Identificadores de ensayo', df['Test #'].nunique())
+        investigators = sorted(x for x in df['PI'].unique() if x)
+        s1, s2 = st.columns([1,2])
+        with s1:
+            investigator = st.selectbox('Investigador principal (PI)', ['Todos'] + investigators)
+        with s2:
+            material_text = st.text_input('Filtrar descripción de material', placeholder='PMMA, SIBAL, etc.')
+        d = df.copy()
+        if investigator != 'Todos':
+            d = d[d['PI'] == investigator]
+        if material_text.strip():
+            d = d[d['Fuel Sample Material'].str.contains(material_text.strip(), case=False, regex=False, na=False)]
+        st.caption(f'{len(d)} ensayos después del filtro')
+        show_cols = ['Test #','PI','Date','Fuel Sample Material','Fan display','Air display',
+                     'Calibrated  initial O2 % by vol','Calibrated final O2 % by vol',
+                     'Initial CO2 % by vol','Final CO2 % by vol', 'Initial CO (ppm)','Final CO (ppm)']
+        st.dataframe(d[show_cols], width='stretch', hide_index=True)
+        metric_defs = {
+            'Oxígeno (% vol.)': ('Calibrated  initial O2 % by vol', 'Calibrated final O2 % by vol', '% vol.'),
+            'CO₂ (% vol.)': ('Initial CO2 % by vol', 'Final CO2 % by vol', '% vol.'),
+            'CO (ppm)': ('Initial CO (ppm)', 'Final CO (ppm)', 'ppm'),
+        }
+        chosen = st.selectbox('Medición para comparar', list(metric_defs))
+        before, after, unit = metric_defs[chosen]
+        plot_data = d[['Test #', before + '_num', after + '_num']].copy()
+        plot_data = plot_data.rename(columns={before + '_num':'Inicial', after + '_num':'Final'})
+        plot_data = plot_data.dropna(subset=['Inicial','Final'])
+        st.write(f'**Inicial frente a final: {chosen}**')
+        if plot_data.empty:
+            st.warning('No hay pares numéricos completos con los filtros elegidos.')
+        else:
+            st.bar_chart(plot_data.set_index('Test #')[['Inicial','Final']], x_label='Identificador de ensayo', y_label=unit)
+            st.caption(f'Se grafican {len(plot_data)} pares con valores numéricos iniciales y finales. No se imputaron datos faltantes.')
+        st.warning('Control de calidad: existen celdas vacías, textos mezclados y valores potencialmente atípicos. En O₂ final aparecen 0.6 %, 0.9 %, 1.6 %, 39.1 % y 40.4 %. Son registros del CSV, NO valores validados; deben contrastarse con los documentos del experimento antes de obtener conclusiones.')
+        with st.expander('Ver posibles valores atípicos de O₂ final'):
+            o2 = df['Calibrated final O2 % by vol_num']
+            anomalies = df[o2.notna() & ((o2 < 5) | (o2 > 30))]
+            st.dataframe(anomalies[['Test #','PI','Fuel Sample Material','Calibrated  initial O2 % by vol','Calibrated final O2 % by vol']], width='stretch', hide_index=True)
+        st.download_button('Descargar la tabla filtrada (CSV)', data=d[show_cols].to_csv(index=False).encode('utf-8-sig'), file_name='bass_ii_filtrado.csv', mime='text/csv')
+        st.caption('Las columnas de ventilador y aire son lecturas del equipo; no equivalen automáticamente a velocidad de flujo calibrada. El CSV tampoco aporta directamente una medida de velocidad de propagación de llama.')
+
 with t4:
-    st.subheader('WARI AI — asistente científico')
-    st.warning('La IA pública todavía no está conectada. Esta fase se habilitará después de consolidar los datos y sus referencias.')
-    st.write('La versión actual no requiere API ni Ollama para explorar las investigaciones.')
+    st.subheader('WARI AI — Próxima fase')
+    st.info('La consulta remota con IA todavía no está habilitada en esta versión pública. El comparador y los datos verificados funcionan de manera independiente.')
+    st.write('Próximo objetivo: recuperar fragmentos específicos del PDF de BASS-II e incorporar un modelo remoto con citas trazables.')
 
 st.divider()
-st.caption('Wari Teams · Herramienta educativa y de investigación; no certifica seguridad contra incendios.')
+st.caption('Wari Teams · Prototipo científico educativo. No permite certificar materiales ni estimar riesgos reales de incendio.')
