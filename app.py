@@ -25,21 +25,21 @@ SRC_BASS2 = "NASA PSI · BASS-II · PSI-25_Experimental table_BASS-II.csv"
 MAX_TESTS = 20
 
 # Paleta neutra + acentos científicos
-WHITE = "#FFFFFF"
-SOFT_BG = "#F7F5F2"
-SOFT_CARD = "#F0EBE8"
-BORDER = "#D9D2CF"
-TEXT = "#171717"
-MUTED = "#5F5A58"
+WHITE = "#F7F5F2"
+SOFT_BG = "#161515"
+SOFT_CARD = "#242222"
+BORDER = "#4D4B4B"
+TEXT = "#F7F5F2"
+MUTED = "#D7CFCC"
 CHARCOAL = "#333232"
 WARM = "#4D4B4B"
 BEIGE = "#BAB7B6"
-CYAN = "#00B6FF"
-ORANGE = "#FF7A00"
-GOLD = "#FFB703"
-VIOLET = "#7C4DFF"
-GREEN = "#2FBF71"
-RED = "#E6484D"
+CYAN = "#00D1FF"
+ORANGE = "#FF8A00"
+GOLD = "#FFC300"
+VIOLET = "#A970FF"
+GREEN = "#39D98A"
+RED = "#FF5A5F"
 
 ACCENTS = [CYAN, ORANGE, GOLD, VIOLET, GREEN]
 
@@ -75,6 +75,7 @@ html, body, [class*="css"] {{ color:var(--text); }}
 .block-container {{ max-width:1280px; padding-top:1.3rem; padding-bottom:3rem; }}
 [data-testid="stSidebar"] {{ background:linear-gradient(180deg,#FFFFFF 0%, #F5F1EE 100%); border-right:1px solid var(--border); }}
 section[data-testid="stSidebar"] .block-container {{ padding-top:1.1rem; }}
+[data-testid="stSidebar"] label, [data-testid="stSidebar"] p, [data-testid="stSidebar"] span, [data-testid="stSidebar"] div {{ color: var(--text); }}
 hr {{ border:none; border-top:1px solid var(--border); margin:1rem 0; }}
 
 /* Tarjetas y bloques */
@@ -89,15 +90,15 @@ hr {{ border:none; border-top:1px solid var(--border); margin:1rem 0; }}
 .hero h1 {{ margin:.35rem 0 .45rem 0; color:white !important; font-size:clamp(2rem,3.5vw,3.35rem); line-height:1.05; }}
 .hero p {{ font-size:1.08rem; line-height:1.7; color:#F4F1EE !important; margin-bottom:.35rem; max-width:920px; }}
 .hero-badges {{ margin-top:1rem; display:flex; gap:.5rem; flex-wrap:wrap; }}
-.hero-badge {{ background:rgba(255,255,255,.14); border:1px solid rgba(255,255,255,.22); color:white; border-radius:999px; padding:.35rem .7rem; font-size:.8rem; font-weight:700; }}
+.hero-badge {{ background:rgba(255,255,255,.10); border:1px solid rgba(255,255,255,.20); color:white; border-radius:999px; padding:.35rem .7rem; font-size:.8rem; font-weight:700; }}
 
 .section-title {{ margin:0; color:var(--charcoal); font-weight:900; font-size:2rem; }}
 .section-subtitle {{ color:var(--muted); margin-top:.25rem; margin-bottom:1rem; line-height:1.6; }}
 
-.card {{ background:var(--card); border:1px solid var(--border); border-radius:18px; padding:18px; box-shadow:0 6px 18px rgba(0,0,0,.04); }}
-.card-soft {{ background:linear-gradient(180deg,#FFFFFF 0%, #FBF9F7 100%); border:1px solid var(--border); border-radius:18px; padding:18px; box-shadow:0 4px 12px rgba(0,0,0,.03); }}
-.card-accent {{ background:var(--card); border:1px solid var(--border); border-left:6px solid var(--cyan); border-radius:18px; padding:18px; box-shadow:0 6px 18px rgba(0,0,0,.04); }}
-.kpi {{ background:var(--card); border:1px solid var(--border); border-radius:18px; padding:14px 16px; min-height:102px; box-shadow:0 6px 18px rgba(0,0,0,.04); position:relative; overflow:hidden; }}
+.card {{ background:var(--card); border:1px solid var(--border); border-radius:18px; padding:18px; box-shadow:0 10px 24px rgba(0,0,0,.25); }}
+.card-soft {{ background:linear-gradient(180deg,#242222 0%, #2C2929 100%); border:1px solid var(--border); border-radius:18px; padding:18px; box-shadow:0 10px 24px rgba(0,0,0,.22); }}
+.card-accent {{ background:var(--card); border:1px solid var(--border); border-left:6px solid var(--cyan); border-radius:18px; padding:18px; box-shadow:0 10px 24px rgba(0,0,0,.22); color:var(--text); }}
+.kpi {{ background:var(--card); border:1px solid var(--border); border-radius:18px; padding:14px 16px; min-height:102px; box-shadow:0 10px 24px rgba(0,0,0,.22); position:relative; overflow:hidden; }}
 .kpi::before {{ content:""; position:absolute; left:0; top:0; width:100%; height:5px; background:linear-gradient(90deg, var(--cyan), var(--orange), var(--gold), var(--violet)); }}
 .kpi .l {{ color:var(--muted); font-size:.76rem; font-weight:800; letter-spacing:.06em; text-transform:uppercase; }}
 .kpi .v {{ color:var(--text); font-size:2rem; font-weight:900; margin-top:.25rem; }}
@@ -111,13 +112,21 @@ hr {{ border:none; border-top:1px solid var(--border); margin:1rem 0; }}
 .pill-red{{background:rgba(230,72,77,.1); color:#9a1e26; border:1px solid rgba(230,72,77,.2);}}
 .pill-gray{{background:#F2EEEC; color:#4D4B4B; border:1px solid #DDD6D3;}}
 
-.mini-step {{ background:var(--card); border:1px solid var(--border); border-radius:16px; padding:16px; min-height:160px; box-shadow:0 6px 18px rgba(0,0,0,.04); }}
+.mini-step {{ background:var(--card); border:1px solid var(--border); border-radius:16px; padding:16px; min-height:160px; box-shadow:0 10px 24px rgba(0,0,0,.22); }}
 .mini-step .num {{ display:inline-flex; width:32px; height:32px; align-items:center; justify-content:center; border-radius:50%; color:white; font-weight:900; font-size:.95rem; margin-bottom:.6rem; }}
 .mini-step h4 {{ margin:.1rem 0 .45rem; color:var(--charcoal); }}
 .mini-step p, .mini-step li {{ color:var(--muted); line-height:1.55; font-size:.94rem; }}
 .mini-step ul {{ padding-left:1.2rem; margin:.35rem 0 0; }}
 
 .source {{ color:var(--muted); font-size:.85rem; margin:.55rem 0; }}
+label, .stMarkdown p, .stMarkdown li, .stCaption, .stText, .st-emotion-cache-10trblm, .st-emotion-cache-16idsys p {{ color: var(--text); }}
+h1, h2, h3, h4, h5, h6 {{ color: var(--text) !important; }}
+.stSelectbox label, .stMultiSelect label, .stTextInput label, .stTextArea label, .stRadio label {{ color: var(--text) !important; font-weight: 700; }}
+[data-baseweb="select"] > div, [data-baseweb="input"] > div, textarea {{ background: #242222 !important; color: var(--text) !important; border:1px solid var(--border)!important; }}
+[data-baseweb="select"] * {{ color: var(--text) !important; }}
+.stTabs [data-baseweb="tab-panel"] {{ background:transparent; }}
+[data-testid="stDataFrame"] {{ border:1px solid var(--border); border-radius:12px; overflow:hidden; }}
+[data-testid="stMetric"] {{ background:#242222; border:1px solid var(--border); color:var(--text); }}
 .note-box {{ background:rgba(0,182,255,.08); border:1px solid rgba(0,182,255,.2); border-left:5px solid var(--cyan); border-radius:14px; padding:14px 16px; }}
 .warn-box {{ background:rgba(255,183,3,.12); border:1px solid rgba(255,183,3,.25); border-left:5px solid var(--gold); border-radius:14px; padding:14px 16px; }}
 .danger-box {{ background:rgba(230,72,77,.08); border:1px solid rgba(230,72,77,.2); border-left:5px solid var(--red); border-radius:14px; padding:14px 16px; }}
@@ -158,14 +167,14 @@ def show_df(df, **kwargs):
 
 def show_plot(fig):
     fig.update_layout(
-        template="plotly_white",
-        paper_bgcolor=WHITE,
-        plot_bgcolor=WHITE,
+        template="plotly_dark",
+        paper_bgcolor=SOFT_CARD,
+        plot_bgcolor=SOFT_CARD,
         margin=dict(l=10, r=10, t=50, b=10),
         legend=dict(orientation="h", y=1.12, x=0),
         font=dict(color=TEXT),
-        xaxis=dict(gridcolor="#EFEAE7", linecolor=BORDER),
-        yaxis=dict(gridcolor="#EFEAE7", linecolor=BORDER),
+        xaxis=dict(gridcolor="#3A3737", linecolor=BORDER, zerolinecolor="#3A3737"),
+        yaxis=dict(gridcolor="#3A3737", linecolor=BORDER, zerolinecolor="#3A3737"),
     )
     try:
         st.plotly_chart(fig, width="stretch")
