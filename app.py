@@ -821,50 +821,169 @@ elif page == "explorer":
         source_caption()
     with tabs[3]:
         st.caption(tr["original_note"])
-        raw_cols=[c for c in pd.read_csv(BASS2_FILE,nrows=0).columns]
-        show_df(filtered[raw_cols])
+        raw_cols=[str(c).strip() for c in pd.read_csv(BASS2_FILE,nrows=0).columns]
+        show_df(filtered[[c for c in raw_cols if c in filtered.columns]])
         source_caption()
 
 elif page == "compare":
-    section_header(tr["compare_title"],tr["compare_desc"])
-    if bass is None:
+    # Comparación científica de DOS registros reales de BASS-II.
+    # Este módulo no inventa valores ni extrae números de celdas ambiguas.
+    section_header(tr["compare_title"], tr["compare_desc"])
+    if bass is None or bass.empty:
         unavailable_data()
         st.stop()
-    ids=bass["_test_key"].tolist()
-    a,b=st.columns(2)
-    ida=a.selectbox(tr["test_a"],ids,index=0)
-    idb=b.selectbox(tr["test_b"],ids,index=min(1,len(ids)-1))
-    if ida==idb:
+    if len(bass) < 2:
+        st.warning("Se necesitan al menos dos ensayos." if not en else "At least two tests are required.")
+        st.stop()
+
+    st.markdown("""
+    <style>
+    .compare-panel {background:linear-gradient(135deg,#142138,#0e1b30);border:1px solid #38516d;
+      border-radius:16px;padding:17px 20px;margin:10px 0 15px;box-shadow:0 8px 24px rgba(0,0,0,.17)}
+    .compare-panel h3 {font-size:1.15rem;color:#fff!important;margin:2px 0 9px}
+    .compare-panel p {color:#d9e8f8!important;margin:4px 0;line-height:1.55}
+    .compare-chip {display:inline-block;border:1px solid #55718c;color:#dcf6ff;background:#1e3049;
+      border-radius:99px;font-size:.8rem;padding:4px 9px;margin:4px 5px 0 0}
+    </style>""",unsafe_allow_html=True)
+
+    def display(v):
+        return "—" if pd.isna(v) else str(v).strip()
+
+    def raw(row, col):
+        return row[col] if col is not None and col in row.index else None
+
+    def status(va, vb):
+        if va is None or vb is None or pd.isna(va) or pd.isna(vb) or str(va).strip().lower() in {"", "none", "nan", "n/a"} or str(vb).strip().lower() in {"", "none", "nan", "n/a"}:
+            return "missing"
+        return "same" if str(va).strip() == str(vb).strip() else "different"
+
+    def val_num(row, key):
+        name = f"{key}_num"
+        return row[name] if name in row.index and pd.notna(row[name]) else None
+
+    ids = bass["_test_key"].tolist()
+    ca, cb = st.columns(2, gap="medium")
+    ida = ca.selectbox("🔹 Ensayo A" if not en else "🔹 Test A", ids, index=0, key="compare_test_a")
+    idb = cb.selectbox("🔸 Ensayo B" if not en else "🔸 Test B", ids, index=1, key="compare_test_b")
+    if ida == idb:
         st.warning(tr["different_tests"])
         st.stop()
-    ra=bass[bass["_test_key"]==ida].iloc[0]
-    rb=bass[bass["_test_key"]==idb].iloc[0]
-    raw_cols=[c for c in pd.read_csv(BASS2_FILE,nrows=0).columns]
-    comparison=[];counts={"eq":0,"diff":0,"miss":0}
-    for col in raw_cols:
-        va,vb=ra[col],rb[col]
-        if pd.isna(va) or pd.isna(vb):state=tr["absent"];counts["miss"]+=1
-        elif str(va).strip()==str(vb).strip():state=tr["equal"];counts["eq"]+=1
-        else:state=tr["different"];counts["diff"]+=1
-        comparison.append({tr["field"]:col,tr["test_a"]:va,tr["test_b"]:vb,tr["status"]:state})
-    a,b,c=st.columns(3)
-    kpi(a,tr["same_count"],counts["eq"])
-    kpi(b,tr["different_count"],counts["diff"])
-    kpi(c,tr["missing_count"],counts["miss"])
-    show_df(pd.DataFrame(comparison))
-    st.markdown("#### "+tr["delta_comp"])
-    changes=[]
-    for gas in ("O2","CO2","CO"):
-        if cols.get(f"{gas}_i") and cols.get(f"{gas}_f"):
-            delta_a=ra[f"{gas}_f_num"]-ra[f"{gas}_i_num"]
-            delta_b=rb[f"{gas}_f_num"]-rb[f"{gas}_i_num"]
-            changes.append({tr["field"]:gas,tr["test_a"]:round(delta_a,3) if pd.notna(delta_a) else tr["missing"],tr["test_b"]:round(delta_b,3) if pd.notna(delta_b) else tr["missing"],"Δ B − Δ A":round(delta_b-delta_a,3) if pd.notna(delta_a) and pd.notna(delta_b) else tr["missing"]})
-    show_df(pd.DataFrame(changes))
-    a,b=st.columns(2)
-    with a:
-        st.success("**"+tr["allowed"]+"**\n\n"+tr["allowed_body"])
-    with b:
-        st.warning("**"+tr["not_allowed"]+"**\n\n"+tr["not_allowed_body"])
+    ra = bass.loc[bass["_test_key"] == ida].iloc[0]
+    rb = bass.loc[bass["_test_key"] == idb].iloc[0]
+
+    def test_card(row, test_id, accent):
+        material=escape(display(raw(row,cols.get("material"))))
+        pi=escape(display(raw(row,cols.get("pi"))))
+        date=escape(display(raw(row,cols.get("date"))))
+        return f"""<div class="compare-panel" style="border-left:5px solid {accent}">
+          <h3>{escape(test_id)}</h3>
+          <p><strong>{'Material' if not en else 'Material'}:</strong> {material}</p>
+          <p><strong>{'Investigador' if not en else 'Researcher'}:</strong> {pi}</p>
+          <p><strong>{'Fecha' if not en else 'Date'}:</strong> {date}</p>
+          <span class="compare-chip">BASS-II · NASA PSI</span></div>"""
+    ca.markdown(test_card(ra,ida,CYAN),unsafe_allow_html=True)
+    cb.markdown(test_card(rb,idb,ORANGE),unsafe_allow_html=True)
+
+    # Metadatos NO se usan para inferir equivalencia experimental.
+    fields=[
+        ("material", "Material" if not en else "Material"),
+        ("fan", "Lectura del ventilador" if not en else "Fan display"),
+        ("air", "Lectura de aire" if not en else "Air display"),
+        ("O2_i", "O₂ inicial (% vol.)" if not en else "Initial O₂ (% vol.)"),
+        ("O2_f", "O₂ final (% vol.)" if not en else "Final O₂ (% vol.)"),
+        ("CO2_i", "CO₂ inicial (% vol.)" if not en else "Initial CO₂ (% vol.)"),
+        ("CO2_f", "CO₂ final (% vol.)" if not en else "Final CO₂ (% vol.)"),
+        ("CO_i", "CO inicial (ppm)" if not en else "Initial CO (ppm)"),
+        ("CO_f", "CO final (ppm)" if not en else "Final CO (ppm)"),
+    ]
+    rows=[]
+    counts={"same":0,"different":0,"missing":0}
+    for code,label in fields:
+        colname=cols.get(code)
+        if colname is None or colname not in bass.columns:
+            continue
+        va=raw(ra,colname)
+        vb=raw(rb,colname)
+        result=status(va,vb)
+        counts[result]+=1
+        icon={"same":"✓","different":"≠","missing":"—"}[result]
+        word=( {"same":"Coincide", "different":"Diferente", "missing":"Falta dato"} if not en else
+               {"same":"Match", "different":"Different", "missing":"Missing"})[result]
+        rows.append({"Variable" if not en else "Variable":label,
+                     "Ensayo A" if not en else "Test A":display(va),
+                     "Ensayo B" if not en else "Test B":display(vb),
+                     "Estado" if not en else "Status":f"{icon} {word}"})
+
+    k1,k2,k3,k4=st.columns(4)
+    kpi(k1,"Coincidencias" if not en else "Matching fields", counts["same"])
+    kpi(k2,"Diferencias" if not en else "Different fields", counts["different"])
+    kpi(k3,"Datos faltantes" if not en else "Missing fields", counts["missing"])
+    kpi(k4,"Variables comparadas" if not en else "Compared variables",len(rows))
+
+    st.markdown("### 📋 "+("Condiciones y mediciones registradas" if not en else "Recorded conditions and measurements"))
+    if rows:
+        show_df(pd.DataFrame(rows))
+    else:
+        st.warning("No hay columnas comparables disponibles." if not en else "No comparable columns found.")
+
+    st.markdown("### 📊 "+("Gráfico comparativo de mediciones" if not en else "Measurement comparison chart"))
+    c1,c2=st.columns([1,2])
+    with c1:
+        gas=st.selectbox("Selecciona un gas" if not en else "Select a gas",["O2","CO2","CO"],format_func=lambda x:{"O2":"Oxígeno (O₂)","CO2":"Dióxido de carbono (CO₂)","CO":"Monóxido de carbono (CO)"}[x] if not en else {"O2":"Oxygen (O₂)","CO2":"Carbon dioxide (CO₂)","CO":"Carbon monoxide (CO)"}[x])
+        unit="ppm" if gas=="CO" else "% vol."
+        st.caption(("Lecturas originales convertidas únicamente cuando la celda contiene un número inequívoco. Unidad: " if not en else "Only unambiguous numeric values are plotted. Unit: ")+unit)
+    with c2:
+        ai=val_num(ra,f"{gas}_i")
+        af=val_num(ra,f"{gas}_f")
+        bi=val_num(rb,f"{gas}_i")
+        bf=val_num(rb,f"{gas}_f")
+        if all(v is None for v in (ai,af,bi,bf)):
+            st.info("No hay datos numéricos para graficar este gas." if not en else "No numeric values available for this gas.")
+        else:
+            fig=go.Figure()
+            fig.add_bar(name=f"{ida}",x=["Inicial","Final"] if not en else ["Initial","Final"],y=[ai,af],marker_color=CYAN)
+            fig.add_bar(name=f"{idb}",x=["Inicial","Final"] if not en else ["Initial","Final"],y=[bi,bf],marker_color=ORANGE)
+            fig.update_layout(barmode="group",title=("Comparación de " if not en else "Comparison of ")+gas,yaxis_title=unit,xaxis_title="")
+            show_plot(fig)
+
+    st.markdown("### 🧪 "+("Cambios entre mediciones iniciales y finales" if not en else "Changes between initial and final readings"))
+    delta_rows=[]
+    for v,unit in [("O2","% vol."),("CO2","% vol."),("CO","ppm")]:
+        a0,a1=val_num(ra,f"{v}_i"),val_num(ra,f"{v}_f")
+        b0,b1=val_num(rb,f"{v}_i"),val_num(rb,f"{v}_f")
+        da=a1-a0 if a0 is not None and a1 is not None else None
+        db=b1-b0 if b0 is not None and b1 is not None else None
+        delta_rows.append({"Variable":f"{v} ({unit})", "Δ A":round(da,3) if da is not None else "—",
+                           "Δ B":round(db,3) if db is not None else "—",
+                           "Δ B − Δ A":round(db-da,3) if da is not None and db is not None else "—"})
+    show_df(pd.DataFrame(delta_rows))
+
+    # Resumen automático sin atribuir causalidad.
+    ai,af=val_num(ra,"O2_i"),val_num(ra,"O2_f")
+    bi,bf=val_num(rb,"O2_i"),val_num(rb,"O2_f")
+    da=af-ai if ai is not None and af is not None else None
+    db=bf-bi if bi is not None and bf is not None else None
+    if da is not None and db is not None:
+        compare_abs=(f"En {ida}, el cambio de O₂ fue {da:+.3f} puntos porcentuales; en {idb}, {db:+.3f}. "
+                     if not en else f"O₂ changed by {da:+.3f} percentage points in {ida} and by {db:+.3f} in {idb}. ")
+        compare_abs += ("Estos son cambios observados; no demuestran por sí solos una causa ni un riesgo de incendio."
+                        if not en else "These are observed differences; they do not establish causation or fire risk on their own.")
+    else:
+        compare_abs=("No hay suficientes mediciones de O₂ para comparar ambos cambios."
+                     if not en else "Insufficient O₂ readings to compare both changes.")
+
+    st.markdown("### 💡 "+("Interpretación guiada" if not en else "Guided interpretation"))
+    st.markdown(f'<div class="compare-panel" style="border-left:5px solid {GOLD}"><h3>{"Resumen descriptivo" if not en else "Descriptive summary"}</h3><p>{escape(compare_abs)}</p></div>',unsafe_allow_html=True)
+    left,right=st.columns(2)
+    with left:
+        st.success(("**Qué sí podemos afirmar**\\n\\n- Identificar coincidencias entre materiales y lecturas registradas.\\n- Calcular diferencias inicial/final cuando existen ambos números.\\n- Mostrar qué datos faltan o requieren revisión."
+                    if not en else "**What we can conclude**\\n\\n- Identify matching materials and recorded readings.\\n- Calculate initial/final differences where both numbers are valid.\\n- Identify missing values and quality concerns.").replace("\\n","\n"))
+    with right:
+        st.warning(("**Qué NO podemos afirmar**\\n\\n- Que una variable causó la diferencia observada.\\n- Que un material es universalmente más seguro.\\n- Que los datos predicen incendios en la Luna o Marte."
+                    if not en else "**What we cannot conclude**\\n\\n- That one variable caused the observed difference.\\n- That one material is universally safer.\\n- That these results predict fires on the Moon or Mars.").replace("\\n","\n"))
+
+    st.info("**"+("Trazabilidad científica" if not en else "Scientific traceability")+"** · "+SRC_BASS2+
+            ". "+("Las lecturas de ventilación son indicadores del equipo; no velocidades calibradas." if not en else "Fan and air displays are instrument readouts, not calibrated velocities."))
     source_caption()
 
 elif page == "space":
