@@ -12,6 +12,7 @@ from html import escape
 import pandas as pd
 import plotly.graph_objects as go
 import streamlit as st
+from simulator import render_simulator
 
 # -----------------------------------------------------------------------------
 # Configuración general
@@ -582,6 +583,7 @@ with st.sidebar:
         ("library","📚 "+tr["library"]),
         ("explorer","📈 "+tr["explorer"]),
         ("compare","⚖️ "+tr["compare"]),
+        ("simulator","🔥 Simulador educativo" if st.session_state.language == "Español" else "🔥 Educational Simulator"),
         ("space","🛰️ "+tr["space"]),
         ("assistant",tx["assistant"]),
         ("method","🧪 "+tr["method"]),
@@ -614,6 +616,7 @@ if page == "home":
     x.button("🚀 "+tx["go_explore"], on_click=go_to, args=("explorer",), use_container_width=True)
     y.button("📚 "+tx["go_library"], on_click=go_to, args=("library",), use_container_width=True)
     z.button("📊 "+tx["go_dashboard"], on_click=go_to, args=("dashboard",), use_container_width=True)
+    st.button("🔥 Simulador educativo / Educational Simulator", on_click=go_to, args=("simulator",), use_container_width=True)
 else:
     st.markdown(f'<div class="accent-top">WARI FIRE AI · FLAME IN FREEFALL · NASA PSI · {"ENGLISH" if en else "ESPAÑOL"}</div>',unsafe_allow_html=True)
 
@@ -985,6 +988,9 @@ elif page == "compare":
     st.info("**"+("Trazabilidad científica" if not en else "Scientific traceability")+"** · "+SRC_BASS2+
             ". "+("Las lecturas de ventilación son indicadores del equipo; no velocidades calibradas." if not en else "Fan and air displays are instrument readouts, not calibrated velocities."))
     source_caption()
+
+elif page == "simulator":
+    render_simulator(st.session_state.language)
 
 elif page == "space":
     section_header(tr["space_title"],tr["space_desc"])
