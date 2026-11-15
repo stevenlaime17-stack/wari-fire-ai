@@ -200,6 +200,51 @@ div[data-testid="stMetric"] {background:#142235;border:1px solid #344961;border-
   .block-container {padding-left:1rem;padding-right:1rem;}
 }
 @media (prefers-reduced-motion:reduce) {*,*:before,*:after {animation:none!important;transition:none!important;}}
+
+/* ETAPA 1 · diseño visual y navegación del producto */
+.block-container {max-width:1360px !important;padding-top:1.0rem !important;}
+[data-testid="stSidebar"] {background:linear-gradient(180deg,#13171d,#090c12)!important;border-right:1px solid #51505a!important;}
+[data-testid="stAppViewContainer"] {
+ background-color:#090b10!important;
+ background-image:radial-gradient(circle,rgba(255,255,255,.42) 1px,transparent 1.4px),radial-gradient(circle,rgba(255,255,255,.2) 1px,transparent 1.4px),linear-gradient(145deg,#080a0e,#141920 75%,#111318)!important;
+ background-size:201px 177px,317px 283px,cover!important;
+ background-position:21px 12px,93px 144px,center!important;
+}
+.hero-v6{position:relative;overflow:hidden;min-height:292px;border-radius:22px;border:1px solid #64616b;
+ background:linear-gradient(105deg,rgba(9,12,19,.97) 0%,rgba(25,28,35,.94) 62%,rgba(40,41,48,.94) 100%);
+ box-shadow:0 16px 40px #0006;padding:30px 34px;display:flex;align-items:center;}
+.hero-v6 .content{position:relative;z-index:3;max-width:67%;}
+.hero-v6 .tag{color:#dfdedc;font-size:.73rem;letter-spacing:.14em;font-weight:800;text-transform:uppercase;}
+.hero-v6 .headline{color:#fff;font-size:clamp(2.05rem,4.5vw,3.8rem);line-height:1.13;font-weight:900;margin:10px 0 8px;}
+.hero-v6 .headline em{font-style:normal;color:#ff914d;}
+.hero-v6 p{color:#eae8e5!important;max-width:690px;font-size:1.05rem;line-height:1.66;}
+.hero-v6 .orbit{position:absolute;right:-70px;bottom:-220px;width:490px;height:490px;border-radius:50%;
+ background:radial-gradient(circle at 44% 25%,#879bb0 0%,#3c556d 18%,#152638 42%,#040a12 67%);
+ border:2px solid rgba(181,192,208,.35);box-shadow:0 0 60px rgba(255,255,255,.12),0 0 14px #8eaec5 inset;}
+.hero-v6 .orbit:before{content:"";position:absolute;top:-25px;left:-28px;right:-28px;bottom:-25px;border:1px solid #8c9ba555;border-radius:50%;transform:rotate(-25deg) scale(1,.65);}
+.hero-v6 .microflame{position:absolute;right:155px;top:45px;font-size:68px;filter:drop-shadow(0 0 20px #ff8e4880);}
+.hero-v6 .stars{position:absolute;inset:0;background-image:radial-gradient(circle,#fff 1px,transparent 1.8px),radial-gradient(circle,#bdbdc5 1px,transparent 1.8px);background-size:103px 91px,169px 147px;opacity:.35;}
+.accent-top{margin:0;padding:4px 0 12px;color:#e8e5e2;letter-spacing:.15em;font-size:.76rem;font-weight:800;}
+.panel-v6{min-height:145px;padding:17px 18px;border:1px solid #55525a;border-radius:15px;background:linear-gradient(135deg,#22242b,#34343b);box-shadow:0 6px 17px #0004;}
+.panel-v6 .k{color:#c5c3c3;font-size:.78rem;font-weight:800;text-transform:uppercase;letter-spacing:.04em;}
+.panel-v6 .v{font-size:2.1rem;font-weight:900;color:#fff;margin:.5rem 0 .25rem;}
+.panel-v6 .small{font-size:.83rem;color:#dedbdd;line-height:1.4;}
+.feature-v6{padding:18px 17px;min-height:182px;background:linear-gradient(180deg,#27272d,#181c23);
+ border:1px solid #66626a;border-top:3px solid #ff9152;border-radius:16px;color:#fff;box-shadow:0 8px 20px #0005;}
+.feature-v6 h4{color:#fff!important;font-size:1.09rem;margin:7px 0!important;}
+.feature-v6 p{color:#dedcde!important;font-size:.9rem;line-height:1.6;margin-bottom:5px;}
+.feature-v6 .ico{font-size:1.75rem;line-height:1.3;}
+.section-v6{color:#fff!important;font-weight:850;margin:24px 0 10px;font-size:1.45rem;}
+.v6-progress{background:#20252e;border:1px solid #575862;border-radius:14px;padding:15px 19px;color:#e6e4e5;margin:15px 0;line-height:1.7;}
+.v6-progress strong{color:#fff;}
+.v6-fine{color:#c1c1c6;font-size:.83rem;}
+[data-testid="stSidebar"] [role="radiogroup"] label{padding:5px 8px;border-radius:9px;}
+[data-testid="stSidebar"] [role="radiogroup"] label:hover{background:#3e3c43;}
+[data-testid="stSidebar"] [role="radiogroup"] label p{color:#fff!important;}
+.stButton button{background:#e7e2de!important;color:#171719!important;border:1px solid #eee9e6!important;border-radius:10px!important;font-weight:800!important;}
+.stButton button:hover{background:#ffb17f!important;color:#161616!important;}
+[data-baseweb="tab"] p{color:#fff!important;}
+@media(max-width:820px){.hero-v6{padding:21px;min-height:320px}.hero-v6 .content{max-width:100%}.hero-v6 .orbit{opacity:.18}.hero-v6 .microflame{opacity:.15}.feature-v6{min-height:initial}}
 </style>
 """,
     unsafe_allow_html=True,
@@ -275,7 +320,8 @@ def step_card(col, n, title, text, bullets, color):
 
 
 def source_caption(text=SRC_BASS2):
-    st.markdown(f'<div class="source">Fuente: {escape(text)}</div>', unsafe_allow_html=True)
+    prefix = "Source" if st.session_state.get("language", "Español") == "English" else "Fuente"
+    st.markdown(f'<div class="source">{prefix}: {escape(text)}</div>', unsafe_allow_html=True)
 
 
 # -----------------------------------------------------------------------------
@@ -416,437 +462,434 @@ qc = quality_report(bass, cols) if bass is not None else pd.DataFrame()
 
 missing = [p for p, f in (("investigaciones.csv", CATALOG_FILE), ("bass_ii_experimental.csv", BASS2_FILE)) if not f.exists()]
 
+
 # -----------------------------------------------------------------------------
-# Sidebar
+# Multilingual user interface — all captions, actions and scientific explanations
 # -----------------------------------------------------------------------------
+I18N = {
+"Español": {
+"language":"Idioma / Language", "navigation":"Navegación", "welcome":"Inicio", "library":"Biblioteca NASA", "explorer":"Explorador BASS-II", "compare":"Comparación científica", "space":"Seguridad espacial", "method":"Metodología",
+"sidebar_desc":"Plataforma científica para explorar datos NASA PSI y comprender la combustión en microgravedad.","sidebar_help":"Recorrido: Biblioteca → Explorador → Comparación → Seguridad espacial.",
+"hero_text":"De datos complejos a evidencia comprensible: explora investigaciones NASA PSI, compara ensayos BASS-II y reconoce los límites de la seguridad contra incendios en el espacio.",
+"hero_1":"Datos NASA PSI", "hero_2":"129 ensayos BASS-II", "hero_3":"Análisis trazable", "hero_4":"Prototipo educativo",
+"studies":"Investigaciones", "tests":"Ensayos BASS-II", "researchers":"Investigadores", "alerts":"Alertas de calidad", "records":"Registros experimentales", "catalog":"Catálogo inicial", "review":"Requieren revisión; no implican errores", "scientists":"Autores del conjunto",
+"what":"¿Qué es WARI FIRE AI?", "intro":"Es una plataforma web educativa que organiza investigaciones de combustión en microgravedad. Permite consultar un catálogo científico, analizar las mediciones iniciales y finales de gases de BASS-II y comparar ensayos sin inventar resultados.",
+"path":"Aprende a usar la plataforma", "step1":"Explora investigaciones", "step1d":"Busca BASS, SAME o FLEX y revisa la fuente oficial.", "step2":"Visualiza datos", "step2d":"Filtra los ensayos y compara O₂, CO₂ o CO.", "step3":"Compara ensayos", "step3d":"Identifica coincidencias y diferencias, sin afirmar causalidad.", "step4":"Evalúa los límites", "step4d":"Consulta alertas y diferencias entre microgravedad y la Luna o Marte.",
+"no_ai":"Esta versión analiza y presenta datos; todavía no incluye un asistente de IA pública ni un predictor de incendios.",
+"lib_title":"Biblioteca científica NASA PSI", "lib_desc":"Busca investigaciones por su área de seguridad, combustible o palabra clave.","search":"Buscar investigación", "search_example":"Ejemplo: BASS, humo, extinción...", "area":"Área de seguridad", "fuel":"Tipo de combustible", "found":"Investigaciones encontradas", "areas":"Áreas activas", "fuels":"Tipos activos", "open_source":"Abrir fuente", "source_catalog":"Catálogo inicial de Wari Teams basado en NASA PSI; los enlaces de SAME y FLEX apuntan al índice general.", "empty":"No hay resultados para estos filtros.",
+"exp_title":"Explorador de mediciones BASS-II", "exp_desc":"Consulta 129 registros de ensayos y compara las lecturas iniciales y finales de O₂, CO₂ o CO.", "guide":"1. Filtra por investigador o material. 2. Selecciona una variable. 3. Elige hasta 20 ensayos. 4. Revisa la ficha y las alertas antes de interpretar.","pi":"Investigador principal", "material_filter":"Buscar material", "material_hint":"PMMA, film, algodón...", "visible":"Ensayos visibles", "unique":"Identificadores únicos", "chart_tab":"Gráficos", "test_tab":"Ficha de ensayo", "quality_tab":"Control de calidad", "raw_tab":"Datos originales", "select_gas":"Variable a visualizar", "select_tests":"Selecciona hasta 20 ensayos", "too_many":"Se grafican solo los primeros 20 ensayos seleccionados.", "no_numbers":"No hay valores numéricos para los ensayos seleccionados.", "plot_title":"Mediciones iniciales y finales", "test_axis":"Identificador de ensayo", "initial":"Inicial", "final":"Final", "delta":"Diferencia (final − inicial)", "calc_title":"Comparación numérica de lecturas", "download_data":"Descargar tabla filtrada CSV", "caution":"La diferencia entre lecturas no determina por sí sola la inflamabilidad o seguridad de un material.","select_test":"Selecciona un ensayo", "material":"Material", "date":"Fecha", "field":"Variable", "raw_i":"Inicial (original)", "raw_f":"Final (original)", "missing":"No disponible", "quality_warning":"Este ensayo tiene alertas automáticas; revisa los valores originales.", "quality_ok":"Sin alertas automáticas. Esto no equivale a validación científica.","fan_note":"Fan display y Air display son lecturas del equipo; no equivalen necesariamente a velocidad física de aire.","quality_intro":"Las alertas son indicaciones estadísticas o de formato. No se corrigen ni eliminan los valores originales.", "alert_type":"Tipo de alerta", "visible_alerts":"Alertas visibles", "download_alerts":"Descargar alertas CSV", "original_note":"Los nombres de columna se mantienen como los publicó NASA para conservar la trazabilidad.",
+"compare_title":"Comparación científica de dos ensayos", "compare_desc":"Contrasta las condiciones registradas y los cambios de O₂, CO₂ y CO, sin atribuir diferencias a una causa no demostrada.", "test_a":"Ensayo A", "test_b":"Ensayo B", "different_tests":"Selecciona dos ensayos diferentes.", "equal":"Igual", "different":"Diferente", "absent":"Dato faltante", "status":"Estado", "same_count":"Campos iguales", "different_count":"Campos diferentes", "missing_count":"Campos incompletos", "delta_comp":"Comparación de cambios numéricos", "allowed":"Qué podemos afirmar", "allowed_body":"Podemos señalar coincidencias, diferencias y operaciones aritméticas documentadas. Esto no demuestra causalidad.", "not_allowed":"Qué no podemos afirmar", "not_allowed_body":"No certifica inflamabilidad, no predice incendios y no extrapola directamente los ensayos a la Luna o Marte.",
+"space_title":"Aplicación a seguridad espacial", "space_desc":"Explora cómo podrían orientar la investigación sobre prevención, detección y supresión de incendios en hábitats espaciales.", "scene":"Entorno de interés", "station":"Estación orbital (microgravedad)", "moon":"Hábitat lunar", "mars":"Hábitat marciano", "scene_station":"Estos datos se obtuvieron en condiciones de microgravedad; aun así, deben revisarse el combustible y las condiciones atmosféricas de cada ensayo.","scene_other":"Los resultados de microgravedad no permiten predecir directamente qué sucederá bajo gravedad lunar o marciana.", "relevance":"Investigaciones por área", "interpretation":"Interpretación responsable", "space_yes":"Útil para localizar estudios y condiciones relevantes para diseñar futuras pruebas de seguridad.", "space_no":"No constituye un simulador, una certificación ni una predicción de incendio.",
+"method_title":"Metodología y límites científicos", "method_desc":"Conoce el origen de las mediciones, el tratamiento de los datos y cómo se identifican las incertidumbres.","method1":"Datos originales", "method1d":"El CSV experimental BASS-II se conserva intacto. Solo números aislados y claros participan en los cálculos.", "method2":"Cálculos", "method2d":"Se presentan diferencias entre lecturas iniciales y finales, no tasas de combustión ni causalidad.", "method3":"Calidad", "method3d":"Se señalan celdas ausentes, textos ambiguos y valores atípicos (IQR), sin eliminarlos.","method4":"Extrapolación", "method4d":"Los datos de microgravedad no equivalen a pruebas de gravedad lunar o marciana.", "method_source":"Fuente principal: NASA Physical Sciences Informatics (PSI), tabla experimental BASS-II, PSI-25_Experimental table_BASS-II.csv.",
+"cat_exp":"Experimento", "cat_area":"Área", "cat_fuel":"Combustible", "cat_desc":"Descripción", "cat_source":"Fuente", "no_file":"No se encontró el archivo requerido.", "raw_note":"Los datos científicos originales no se traducen ni modifican; se traducen las etiquetas y explicaciones de la interfaz.",
+"oxygen":"Oxígeno (O₂)", "carbon_dioxide":"Dióxido de carbono (CO₂)", "carbon_monoxide":"Monóxido de carbono (CO)", "gas_unit":"% en volumen", "co_unit":"ppm", "source":"Fuente"
+},
+"English": {
+"language":"Language / Idioma", "navigation":"Navigation", "welcome":"Home", "library":"NASA Library", "explorer":"BASS-II Explorer", "compare":"Scientific comparison", "space":"Space fire safety", "method":"Methodology",
+"sidebar_desc":"Scientific platform for exploring NASA PSI data and understanding combustion in microgravity.","sidebar_help":"Guide: Library → Explorer → Comparison → Space safety.",
+"hero_text":"From complex data to understandable evidence: explore NASA PSI studies, compare BASS-II tests, and understand the limits of fire safety research in space.",
+"hero_1":"NASA PSI data", "hero_2":"129 BASS-II tests", "hero_3":"Traceable analysis", "hero_4":"Educational prototype",
+"studies":"Investigations", "tests":"BASS-II tests", "researchers":"Researchers", "alerts":"Quality flags", "records":"Experimental records", "catalog":"Initial catalog", "review":"Flagged for review; not necessarily errors", "scientists":"Contributors in the dataset",
+"what":"What is WARI FIRE AI?", "intro":"An educational web platform that organizes microgravity combustion research. It offers a searchable catalog, initial and final gas measurements from BASS-II, and test comparisons without inventing results.",
+"path":"How to use the platform", "step1":"Browse research", "step1d":"Search for BASS, SAME or FLEX and check the official source.", "step2":"Explore measurements", "step2d":"Filter tests and compare O₂, CO₂ or CO.", "step3":"Compare tests", "step3d":"Identify similarities and differences without claiming causation.", "step4":"Check limitations", "step4d":"Review flags and differences between microgravity, the Moon and Mars.",
+"no_ai":"This version presents and analyzes data; it does not yet offer public generative AI or fire prediction.",
+"lib_title":"NASA PSI Research Library", "lib_desc":"Search by safety area, fuel type or keyword.","search":"Search investigations", "search_example":"e.g., BASS, smoke, extinction...", "area":"Safety area", "fuel":"Fuel type", "found":"Investigations found", "areas":"Selected areas", "fuels":"Selected fuel types", "open_source":"Open source", "source_catalog":"Wari Teams' initial catalog based on NASA PSI; SAME and FLEX links lead to the general index.", "empty":"No matching records for these filters.",
+"exp_title":"BASS-II Measurements Explorer", "exp_desc":"Browse 129 test records and compare initial and final O₂, CO₂ and CO measurements.", "guide":"1. Filter by researcher or material. 2. Select a gas. 3. Choose up to 20 tests. 4. Check test details and quality flags.","pi":"Principal investigator", "material_filter":"Search material", "material_hint":"PMMA, film, cotton...", "visible":"Visible tests", "unique":"Unique test IDs", "chart_tab":"Charts", "test_tab":"Test details", "quality_tab":"Quality control", "raw_tab":"Original data", "select_gas":"Measurement to display", "select_tests":"Choose up to 20 tests", "too_many":"Only the first 20 selected tests are shown.", "no_numbers":"The selected tests have no usable numeric measurements.", "plot_title":"Initial and final measurements", "test_axis":"Test ID", "initial":"Initial", "final":"Final", "delta":"Difference (final − initial)", "calc_title":"Numerical comparison of measurements", "download_data":"Download filtered CSV", "caution":"The difference between measurements alone does not determine a material's flammability or safety.","select_test":"Select a test", "material":"Material", "date":"Date", "field":"Variable", "raw_i":"Initial (original)", "raw_f":"Final (original)", "missing":"Unavailable", "quality_warning":"This test has automatic quality flags; examine the original values.", "quality_ok":"No automatic flags were found. This is not full scientific validation.","fan_note":"Fan display and Air display are instrument readings, not necessarily physical airflow velocities.","quality_intro":"Flags describe statistical or formatting issues; original values are never changed or removed.", "alert_type":"Flag category", "visible_alerts":"Visible flags", "download_alerts":"Download flags CSV", "original_note":"Original NASA column names are retained for scientific traceability.",
+"compare_title":"Scientific comparison of two tests", "compare_desc":"Compare recorded conditions and changes in O₂, CO₂ and CO without attributing differences to unproven causes.", "test_a":"Test A", "test_b":"Test B", "different_tests":"Please select two different tests.", "equal":"Same", "different":"Different", "absent":"Missing data", "status":"Status", "same_count":"Matching fields", "different_count":"Different fields", "missing_count":"Incomplete fields", "delta_comp":"Comparison of numerical changes", "allowed":"What the data supports", "allowed_body":"We can report matching fields, differences and documented arithmetic calculations. This does not demonstrate causation.", "not_allowed":"What the data does not support", "not_allowed_body":"It does not certify flammability, predict real fires, or directly extrapolate tests to the Moon or Mars.",
+"space_title":"Applications to space fire safety", "space_desc":"Explore how research may inform future studies on fire prevention, detection and suppression in crewed habitats.", "scene":"Environment of interest", "station":"Orbital station (microgravity)", "moon":"Lunar habitat", "mars":"Martian habitat", "scene_station":"These records come from microgravity experiments. Fuel and atmospheric test conditions must still be checked.","scene_other":"Microgravity results do not directly predict fire behavior under lunar or Martian gravity.", "relevance":"Investigations by safety area", "interpretation":"Responsible interpretation", "space_yes":"Useful for identifying studies and conditions relevant to future safety testing.", "space_no":"This is not a simulator, a certification tool, or a fire prediction system.",
+"method_title":"Methods and scientific limitations", "method_desc":"Learn where the measurements came from, how they are processed, and how uncertainty is handled.","method1":"Original data", "method1d":"The original BASS-II CSV is preserved. Only unambiguous, single numeric values are used for calculations.", "method2":"Calculations", "method2d":"Final-minus-initial differences are shown, not combustion rates or causal effects.", "method3":"Quality", "method3d":"Missing cells, ambiguous text and IQR outliers are flagged but not deleted.","method4":"Extrapolation", "method4d":"Microgravity data are not equivalent to experiments in lunar or Martian gravity.", "method_source":"Main source: NASA Physical Sciences Informatics (PSI), BASS-II experimental table, PSI-25_Experimental table_BASS-II.csv.",
+"cat_exp":"Investigation", "cat_area":"Safety area", "cat_fuel":"Fuel", "cat_desc":"Description", "cat_source":"Source", "no_file":"The required file could not be found.", "raw_note":"Original scientific data are neither translated nor changed; only interface labels and explanations are localized.",
+"oxygen":"Oxygen (O₂)", "carbon_dioxide":"Carbon dioxide (CO₂)", "carbon_monoxide":"Carbon monoxide (CO)", "gas_unit":"% by volume", "co_unit":"ppm", "source":"Source"
+}
+}
+
+AREA_EN = {"Prevención":"Prevention", "Detección":"Detection", "Supresión":"Suppression"}
+FUEL_EN = {"Sólidos":"Solids", "Líquidos":"Liquids", "Aerosoles":"Aerosols"}
+DESC_EN = {
+  "BASS":"Solid-material burning and suppression in microgravity.",
+  "SAME":"Smoke and aerosol measurements in microgravity.",
+  "FLEX":"Liquid-fuel droplet flame extinction studies."
+}
+
+# Navigation and language state
+if "language" not in st.session_state:
+    st.session_state.language = "Español"
+if "section_choice" not in st.session_state:
+    st.session_state.section_choice = "home"
+
+ADDITIONAL = {
+    "Español": {
+        "dashboard":"📊 Panel general", "assistant":"🤖 Asistente WARI AI",
+        "nav_home":"🏠 Página de inicio", "welcome":"Inicio", "quick":"Acceso directo a los módulos",
+        "hero_tag":"WARI TEAMS · NASA SPACE APPS CHALLENGE 2026",
+        "hero_title":"Inteligencia para la <em>seguridad espacial</em>",
+        "hero_desc":"Explora datos de combustión en microgravedad, compara ensayos reales de NASA PSI y descubre qué evidencia puede contribuir a la prevención, detección y supresión de incendios en futuras misiones.",
+        "go_explore":"Explorar BASS-II", "go_library":"Ver investigaciones", "go_dashboard":"Ver panel general",
+        "metrics_title":"Panorama de la investigación", "modules_title":"Explora la plataforma",
+        "method_note":"Los datos son originales de NASA PSI. Las métricas corresponden al catálogo cargado, no a toda la investigación de la NASA.",
+        "journey_title":"Cómo funciona WARI FIRE AI", "journey_desc":"Un recorrido desde la evidencia hasta una comparación verificable.",
+        "stage1":"1 · Descubre", "stage1d":"Busca investigaciones sobre combustión y revisa la fuente.",
+        "stage2":"2 · Explora", "stage2d":"Selecciona ensayos y variables O₂, CO₂ y CO.",
+        "stage3":"3 · Compara", "stage3d":"Observa diferencias reales y datos faltantes.",
+        "stage4":"4 · Interpreta", "stage4d":"Comprueba alcances y límites científicos.",
+        "dashboard_title":"Panel general", "dashboard_sub":"Resumen de los archivos realmente cargados y acceso a los análisis.",
+        "research_count":"Estudios catalogados", "test_count":"Ensayos BASS-II", "pi_count":"Investigadores", "quality_count":"Alertas de calidad",
+        "briefs":"Documentos y mediciones", "ready":"Archivos de datos disponibles", "missing_files":"Archivos faltantes",
+        "assistant_title":"Asistente WARI AI", "assistant_sub":"Módulo planificado: preguntas científicas con citas y verificación de fuentes.",
+        "assistant_status":"La IA pública aún no está conectada. En esta etapa no generamos respuestas automáticas ni simulamos una conexión real.",
+        "assistant_future":"La siguiente etapa implementará búsqueda documental verificable y respuestas sustentadas en fuentes NASA PSI.",
+        "module_desc":["Encuentra BASS, SAME y FLEX con sus enlaces.","Visualiza mediciones de los 129 ensayos BASS-II.","Contrasta dos ensayos y sus diferencias.","Consulta posibles aplicaciones con cautela científica.","Conoce el tratamiento de los datos y sus límites.","Asistente documental con IA: próximo desarrollo."],
+        "help_nav":"Selecciona una sección o usa los accesos de Inicio.",
+        "test_progress":"Probado: catálogo y datos BASS-II; el resto continúa en desarrollo.",
+    },
+    "English": {
+        "dashboard":"📊 Dashboard", "assistant":"🤖 WARI AI Assistant",
+        "nav_home":"🏠 Home", "welcome":"Home", "quick":"Open a module",
+        "hero_tag":"WARI TEAMS · NASA SPACE APPS CHALLENGE 2026",
+        "hero_title":"Evidence for <em>space fire safety</em>",
+        "hero_desc":"Explore microgravity combustion data, compare real NASA PSI tests, and discover which evidence may inform fire prevention, detection, and suppression in future space missions.",
+        "go_explore":"Explore BASS-II", "go_library":"Browse research", "go_dashboard":"Open dashboard",
+        "metrics_title":"Research overview", "modules_title":"Explore the platform",
+        "method_note":"Data come from NASA PSI. Metrics describe the loaded catalog only, not the entire NASA research archive.",
+        "journey_title":"How WARI FIRE AI works", "journey_desc":"A guided path from research evidence to traceable comparison.",
+        "stage1":"1 · Discover", "stage1d":"Search combustion studies and review their sources.",
+        "stage2":"2 · Explore", "stage2d":"Select tests and O₂, CO₂ or CO variables.",
+        "stage3":"3 · Compare", "stage3d":"Inspect observed differences and missing data.",
+        "stage4":"4 · Interpret", "stage4d":"Review scientific scope and limitations.",
+        "dashboard_title":"Research dashboard", "dashboard_sub":"Summary of data files actually loaded and links to analysis modules.",
+        "research_count":"Cataloged studies", "test_count":"BASS-II tests", "pi_count":"Researchers", "quality_count":"Quality flags",
+        "briefs":"Studies and measurements", "ready":"Data files available", "missing_files":"Missing files",
+        "assistant_title":"WARI AI Assistant", "assistant_sub":"Planned module: evidence-grounded scientific questions and cited answers.",
+        "assistant_status":"Public AI is not connected yet. This stage does not generate automatic responses or pretend a remote AI is running.",
+        "assistant_future":"A later stage will add verifiable document search and answers grounded in NASA PSI sources.",
+        "module_desc":["Browse BASS, SAME and FLEX with source links.","Visualize measurements across 129 BASS-II test records.","Compare two tests and inspect differences.","Review possible applications with scientific caveats.","Understand data processing and limitations.","Evidence-based AI assistant: coming later."],
+        "help_nav":"Choose a section or use shortcuts from Home.",
+        "test_progress":"Validated: research catalog and BASS-II data; other features are in development.",
+    },
+}
+
 with st.sidebar:
     if LOGO.exists():
-        st.image(str(LOGO), width=148)
-    st.markdown('<div class="sidebar-title">WARI FIRE AI</div>', unsafe_allow_html=True)
-    st.markdown('<div class="sidebar-text">Plataforma didáctica para explorar y comparar investigaciones de combustión en microgravedad con trazabilidad científica.</div>', unsafe_allow_html=True)
-    st.markdown('<div class="sidebar-block"><div class="sidebar-title">Módulos</div></div>', unsafe_allow_html=True)
-    page = st.radio(
-        "Ir a",
-        [
-            "🏠 Inicio",
-            "📚 Biblioteca científica",
-            "📈 Explorador BASS-II",
-            "⚖️ Comparación científica",
-            "🛰️ Seguridad espacial",
-            "🧪 Metodología",
-        ],
-        label_visibility="collapsed",
-    )
-    st.markdown('<div class="sidebar-block"><div class="sidebar-title">Qué hace la app</div><div class="sidebar-text">• Ordena investigaciones NASA PSI.<br>• Visualiza mediciones BASS-II.<br>• Señala límites y alertas.<br>• Facilita explicar el proyecto al jurado.</div></div>', unsafe_allow_html=True)
-    pills([("Datos verificables", "green"), ("Comparaciones", "cyan"), ("Uso educativo", "orange")])
+        st.image(str(LOGO), width=136)
+    st.markdown("### WARI FIRE AI")
+    st.caption("Flame in Freefall · NASA Space Apps Challenge 2026")
+    st.selectbox("🌐 Language / Idioma", ["Español", "English"], key="language")
+    tr = I18N[st.session_state.language]
+    tx = ADDITIONAL[st.session_state.language]
+    OPTIONS = [
+        ("home",tx["nav_home"]),
+        ("dashboard",tx["dashboard"]),
+        ("library","📚 "+tr["library"]),
+        ("explorer","📈 "+tr["explorer"]),
+        ("compare","⚖️ "+tr["compare"]),
+        ("space","🛰️ "+tr["space"]),
+        ("assistant",tx["assistant"]),
+        ("method","🧪 "+tr["method"]),
+    ]
+    labels = dict(OPTIONS)
+    page = st.radio(tr["navigation"], [key for key,_ in OPTIONS],format_func=lambda key:labels[key],key="section_choice")
+    st.caption(tx["help_nav"])
     st.divider()
     st.caption("Wari Teams · Ayacucho, Perú")
-    st.caption("NASA Space Apps 2026 · Flame in Freefall")
+    st.caption("Research prototype · Not a certified safety tool")
 
-# -----------------------------------------------------------------------------
-# Hero
-# -----------------------------------------------------------------------------
-st.markdown(
-    """
-<div class="hero">
-  <div class="eyebrow">WARI TEAMS · NASA SPACE APPS CHALLENGE 2026</div>
-  <h1>🔥 WARI FIRE AI</h1>
-  <p>Convierte datos de combustión en microgravedad en información clara, comparativa y didáctica.
-  La app organiza el catálogo NASA PSI, explora la tabla experimental BASS-II y deja explícitos los límites científicos de cada interpretación.</p>
-  <div class="hero-badges">
-    <span class="hero-badge">Visualización científica</span>
-    <span class="hero-badge">Comparación de ensayos</span>
-    <span class="hero-badge">Control de calidad</span>
-    <span class="hero-badge">Explicación para jurado</span>
-  </div>
-</div>
-""",
-    unsafe_allow_html=True,
-)
+tr = I18N[st.session_state.language]
+tx = ADDITIONAL[st.session_state.language]
+en = st.session_state.language == "English"
 
-# =============================================================================
-# INICIO
-# =============================================================================
-if page.startswith("🏠"):
-    c1, c2, c3, c4 = st.columns(4)
-    kpi(c1, "Investigaciones en catálogo", len(catalog) if catalog is not None else "—", "Catálogo general NASA PSI")
-    kpi(c2, "Ensayos BASS-II", len(bass) if bass is not None else "—", "Registros experimentales")
-    kpi(c3, "Investigadores (PI)", bass[cols["pi"]].nunique() if bass is not None and cols.get("pi") else "—", "Autores de los ensayos")
-    kpi(c4, "Hallazgos de calidad", len(qc) if bass is not None else "—", "Alertas automáticas descriptivas")
 
-    st.write("")
-    section_header("Resumen rápido de la app", "WARI FIRE AI no inventa resultados: organiza, visualiza y explica datos existentes para apoyar la comprensión de la seguridad contra incendios en el espacio.")
-    col_a, col_b = st.columns([1.25, 1])
-    with col_a:
-        info_box(
-            "<b>Funcionamiento general:</b> primero consultas el catálogo de investigaciones; luego exploras ensayos BASS-II; después comparas dos registros; y finalmente revisas qué conclusiones son válidas y cuáles son solo extrapolaciones.",
-            "note",
-        )
-        st.markdown("#### ¿Qué problema resuelve?")
-        st.write(
-            "Ayuda a que estudiantes, jurados y visitantes entiendan rápidamente qué investiga la NASA sobre combustión en microgravedad, cómo se registran algunas mediciones y qué tan lejos se puede llegar con esas evidencias sin exagerar las conclusiones."
-        )
-        pills([
-            ("Exploración guiada", "cyan"),
-            ("Interpretación responsable", "gold"),
-            ("Presentación más clara", "violet"),
-        ])
-    with col_b:
-        st.markdown('<div class="card-accent"><h4 style="margin-top:0">Ruta recomendada</h4><ol style="line-height:1.8; color:#d0deed;"><li>Empieza en <b>Biblioteca científica</b>.</li><li>Continúa con <b>Explorador BASS-II</b>.</li><li>Usa <b>Comparación científica</b> para evidencias lado a lado.</li><li>Cierra con <b>Seguridad espacial</b> y <b>Metodología</b>.</li></ol></div>', unsafe_allow_html=True)
+def go_to(section):
+    st.session_state.section_choice=section
 
-    st.write("")
-    step_cols = st.columns(4)
-    step_card(step_cols[0], 1, "Biblioteca", "Encuentra estudios y abre la fuente original.", ["Busca BASS, SAME o FLEX", "Filtra por área y combustible"], CYAN)
-    step_card(step_cols[1], 2, "Explorador", "Observa registros y variables del ensayo.", ["Elige O₂, CO₂ o CO", "Filtra por PI o material"], ORANGE)
-    step_card(step_cols[2], 3, "Comparación", "Contrasta dos ensayos sin inventar causas.", ["Mira coincidencias y diferencias", "Consulta limitaciones"], GOLD)
-    step_card(step_cols[3], 4, "Metodología", "Explica al jurado cómo se construyó el análisis.", ["Datos vs cálculos", "Alcances y límites"], VIOLET)
 
-    st.write("")
-    section_header("Lo que mejora esta versión", "La interfaz ahora es más visual, más guiada y más útil para una demostración pública.")
-    m1, m2, m3 = st.columns(3)
-    with m1:
-        st.markdown('<div class="card-soft"><h4>Más didáctica</h4><p>Incluye recorridos de uso, resúmenes breves y cajas de interpretación para que cualquiera pueda entender la plataforma.</p></div>', unsafe_allow_html=True)
-    with m2:
-        st.markdown('<div class="card-soft"><h4>Más interactiva</h4><p>Destaca filtros, comparaciones, descargas y alertas; además mejora la jerarquía visual entre bloques.</p></div>', unsafe_allow_html=True)
-    with m3:
-        st.markdown('<div class="card-soft"><h4>Más presentable</h4><p>Combina la paleta neutra con colores de acento que hacen la experiencia más viva sin perder seriedad científica.</p></div>', unsafe_allow_html=True)
+if page == "home":
+    st.markdown(f"""
+    <div class="hero-v6">
+       <div class="stars"></div><div class="orbit"></div><div class="microflame">🔥</div>
+       <div class="content"><div class="tag">{escape(tx['hero_tag'])}</div>
+       <h1 class="headline">WARI FIRE AI<br>{tx['hero_title']}</h1>
+       <p>{escape(tx['hero_desc'])}</p></div>
+    </div>""",unsafe_allow_html=True)
+    x,y,z=st.columns([1,1,1])
+    x.button("🚀 "+tx["go_explore"], on_click=go_to, args=("explorer",), use_container_width=True)
+    y.button("📚 "+tx["go_library"], on_click=go_to, args=("library",), use_container_width=True)
+    z.button("📊 "+tx["go_dashboard"], on_click=go_to, args=("dashboard",), use_container_width=True)
+else:
+    st.markdown(f'<div class="accent-top">WARI FIRE AI · FLAME IN FREEFALL · NASA PSI · {"ENGLISH" if en else "ESPAÑOL"}</div>',unsafe_allow_html=True)
 
-    if missing:
-        info_box("<b>Archivos faltantes:</b> " + ", ".join(missing) + ". Revisa la carpeta <code>data/</code> antes de continuar.", "danger")
-    else:
-        info_box("<b>Estado:</b> la app tiene los archivos base necesarios y está lista para continuar con la siguiente fase de desarrollo.", "success")
 
-# =============================================================================
-# BIBLIOTECA
-# =============================================================================
-elif page.startswith("📚"):
-    section_header("Biblioteca científica", "Explora el catálogo general de investigaciones NASA PSI relacionadas con seguridad contra incendios en el espacio.")
-    info_box("<b>Cómo usarla:</b> escribe una palabra clave, filtra por área de seguridad y combustible, y abre la fuente para revisar la investigación original.", "note")
+def localized_catalog(df):
+    result = df.copy()
+    if en:
+        result["area"] = result["area"].replace(AREA_EN)
+        result["combustible"] = result["combustible"].replace(FUEL_EN)
+        result["descripcion"] = result.apply(lambda row: DESC_EN.get(str(row["experimento"]), str(row["descripcion"])),axis=1)
+    result = result.rename(columns={
+        "experimento": tr["cat_exp"], "area": tr["cat_area"],
+        "combustible": tr["cat_fuel"],"descripcion":tr["cat_desc"],"fuente":tr["cat_source"]
+    })
+    return result
 
-    if catalog is None:
-        info_box("No se encontró <code>data/investigaciones.csv</code>.", "danger")
-    else:
-        c1, c2, c3 = st.columns([2, 1, 1])
-        q = c1.text_input("Buscar investigación", placeholder="Ejemplo: BASS, humo, extinción, aerosoles…")
-        areas = sorted(catalog["area"].dropna().unique())
-        sel_areas = c2.multiselect("Área de seguridad", areas, default=areas)
-        fuels = sorted(catalog["combustible"].dropna().unique())
-        sel_fuels = c3.multiselect("Combustible", fuels, default=fuels)
 
-        out = catalog.copy()
-        if sel_areas:
-            out = out[out["area"].isin(sel_areas)]
-        if sel_fuels:
-            out = out[out["combustible"].isin(sel_fuels)]
-        if q:
-            mask = out.apply(lambda r: q.lower() in " ".join(map(str, r.values)).lower(), axis=1)
-            out = out[mask]
-
-        c1, c2, c3 = st.columns(3)
-        kpi(c1, "Resultados filtrados", len(out), "Investigaciones visibles")
-        kpi(c2, "Áreas activas", len(sel_areas), "Prevención, detección, supresión")
-        kpi(c3, "Combustibles activos", len(sel_fuels), "Tipos de materiales")
-
-        cfg = {"fuente": st.column_config.LinkColumn("fuente", display_text="Abrir fuente")} if "fuente" in out.columns else {}
-        show_df(out, column_config=cfg)
-        source_caption("Catálogo del equipo Wari Teams elaborado a partir de NASA PSI")
-        pills([("Datos de catálogo", "green"), ("Fuentes consultables", "cyan")])
-
-# =============================================================================
-# EXPLORADOR BASS-II
-# =============================================================================
-elif page.startswith("📈"):
-    section_header("Explorador BASS-II", "Visualiza ensayos experimentales, filtra registros y comprende mejor qué datos fueron medidos y cuáles solo pueden calcularse.")
-    info_box("<b>Uso recomendado:</b> selecciona un investigador o material, elige la variable de interés y luego interpreta el gráfico junto con la ficha del ensayo y el control de calidad.", "note")
-
-    if bass is None:
-        info_box("No se encontró <code>data/bass_ii_experimental.csv</code>.", "danger")
-        st.stop()
-
-    # filtros globales
-    with st.sidebar:
-        st.markdown('<div class="sidebar-block"><div class="sidebar-title">Filtros BASS-II</div></div>', unsafe_allow_html=True)
-        pis = sorted(bass[cols["pi"]].dropna().astype(str).unique()) if cols.get("pi") else []
-        sel_pi = st.multiselect("Investigador principal", pis, default=pis)
-        txt = st.text_input("Material contiene", placeholder="PMMA, film, cotton…")
-
-    f = bass.copy()
-    if cols.get("pi") and sel_pi:
-        f = f[f[cols["pi"]].astype(str).isin(sel_pi)]
-    if txt and cols.get("material"):
-        f = f[f[cols["material"]].astype(str).str.contains(txt, case=False, na=False)]
-
-    if f.empty:
-        info_box("No hay ensayos con esos filtros. Modifica el investigador o el material.", "warn")
-        st.stop()
-
-    s1, s2, s3 = st.columns(3)
-    kpi(s1, "Ensayos visibles", len(f), "Después de filtros")
-    kpi(s2, "PI visibles", f[cols["pi"]].nunique() if cols.get("pi") else "—", "Autores en pantalla")
-    kpi(s3, "Identificadores", f["_test"].nunique(), "Test # únicos")
-
-    tab_graf, tab_ficha, tab_qc, tab_tabla = st.tabs(["📊 Gráficos por ensayo", "🧾 Ficha de ensayo", "🛠️ Control de calidad", "📋 Tabla original"])
-
-    with tab_graf:
-        avail = [v for v in ("O2", "CO2", "CO") if cols.get(f"{v}_i") and cols.get(f"{v}_f")]
-        if not avail:
-            info_box("No se detectaron pares válidos de columnas para O₂, CO₂ o CO.", "danger")
-            st.stop()
-
-        var_labels = {
-            "O2": ("Oxígeno (O₂)", "% vol.", CYAN, "Representa el porcentaje volumétrico de oxígeno registrado al inicio y al final del ensayo."),
-            "CO2": ("Dióxido de carbono (CO₂)", "% vol.", ORANGE, "Muestra el comportamiento del CO₂ medido al inicio y al final del ensayo."),
-            "CO": ("Monóxido de carbono (CO)", "ppm", GOLD, "Indica concentraciones de CO, útiles para interpretar productos de combustión."),
+def local_qc(df):
+    x = df.copy()
+    if en:
+        reasons = {
+         "Dato ausente":"Missing value",
+         "Texto ambiguo; no se transformó en medición":"Ambiguous text; not converted to a measurement",
+         "Fuera del rango 0–100 % vol.":"Outside physical 0–100% volume range",
+         "Valor estadísticamente atípico (IQR)":"Statistical outlier (IQR)"
         }
-        v1, v2 = st.columns([1.2, 2.2])
-        with v1:
-            var = st.radio("Variable a visualizar", avail, horizontal=True, format_func=lambda x: var_labels[x][0])
-            st.markdown(f'<div class="card-soft"><h4 style="margin-top:0">¿Qué estás viendo?</h4><p>{escape(var_labels[var][3])}</p><p><b>Unidad:</b> {escape(var_labels[var][1])}</p></div>', unsafe_allow_html=True)
-        with v2:
-            tests = f["_test_key"].tolist()
-            default = tests[: min(8, len(tests))]
-            chosen = st.multiselect(f"Ensayos a comparar (máx. {MAX_TESTS})", tests, default=default)
+        x["Alerta"] = x["Alerta"].replace(reasons)
+        x["Variable"] = x["Variable"].str.replace(" inicial"," initial", regex=False).str.replace(" final"," final", regex=False)
+    return x.rename(columns={"Ensayo":tr["tests"],"Variable":tr["field"],"Valor original":tr["raw_i"],"Alerta":tr["alert_type"]})
 
-        if len(chosen) > MAX_TESTS:
-            st.warning(f"Se mostrarán solo los primeros {MAX_TESTS} ensayos seleccionados.")
-            chosen = chosen[:MAX_TESTS]
 
-        sub = f[f["_test_key"].isin(chosen)]
-        ok = sub.dropna(subset=[f"{var}_i_num", f"{var}_f_num"], how="all")
-        excluded = len(sub) - len(ok)
-        if excluded:
-            info_box(f"{excluded} ensayo(s) seleccionados no tienen medición numérica utilizable para {var_labels[var][0]}.", "warn")
-        if ok.empty:
-            info_box("Selecciona ensayos con mediciones numéricas disponibles.", "warn")
-        else:
-            fig = go.Figure()
-            fig.add_bar(x=ok["_test_key"], y=ok[f"{var}_i_num"], name="Inicial", marker_color=var_labels[var][2])
-            fig.add_bar(x=ok["_test_key"], y=ok[f"{var}_f_num"], name="Final", marker_color=CHARCOAL)
-            fig.update_layout(
-                barmode="group",
-                title=f"{var_labels[var][0]} inicial vs. final",
-                xaxis_title="Identificador del ensayo",
-                yaxis_title=var_labels[var][1],
-                xaxis=dict(type="category"),
-            )
+def unavailable_data():
+    st.error(tr["no_file"])
+
+
+def metrics():
+    c1,c2,c3,c4=st.columns(4)
+    kpi(c1,tx["research_count"], len(catalog) if catalog is not None else "—")
+    kpi(c2,tx["test_count"],len(bass) if bass is not None else "—")
+    kpi(c3,tx["pi_count"],bass[cols["pi"]].nunique() if bass is not None and cols.get("pi") else "—")
+    kpi(c4,tx["quality_count"],len(qc))
+
+
+def module_cards():
+    items=[("library","📚",tr["library"]), ("explorer","📈",tr["explorer"]),
+           ("compare","⚖️",tr["compare"]), ("space","🛰️",tr["space"]),
+           ("method","🧪",tr["method"]), ("assistant","🤖",tx["assistant"])]
+    for row_start in (0,3):
+        columns=st.columns(3)
+        for i,(code,icon,title) in enumerate(items[row_start:row_start+3]):
+            col=columns[i]
+            with col:
+                st.markdown(f'<div class="feature-v6"><div class="ico">{icon}</div><h4>{escape(title)}</h4><p>{escape(tx["module_desc"][row_start+i])}</p></div>',unsafe_allow_html=True)
+                st.button(("Open / Abrir ↗" if en else "Abrir módulo ↗"),key=f"module_{code}",use_container_width=True,on_click=go_to,args=(code,))
+        st.write("")
+
+
+if page == "home":
+    st.markdown(f'<h2 class="section-v6">{escape(tx["metrics_title"])}</h2>',unsafe_allow_html=True)
+    metrics()
+    st.caption(tx["method_note"])
+    st.markdown(f'<h2 class="section-v6">{escape(tx["modules_title"])}</h2>',unsafe_allow_html=True)
+    module_cards()
+    st.markdown(f'<h2 class="section-v6">{escape(tx["journey_title"])}</h2>',unsafe_allow_html=True)
+    st.caption(tx["journey_desc"])
+    steps=st.columns(4)
+    for i in range(1,5):
+        step_card(steps[i-1],i,tx[f"stage{i}"],tx[f"stage{i}d"],[],[CYAN,ORANGE,GOLD,VIOLET][i-1])
+    st.write("")
+    st.markdown(f'<div class="v6-progress"><strong>{escape(tx["test_progress"])}</strong><br>{escape(tr["no_ai"])}</div>',unsafe_allow_html=True)
+    if missing: st.error(tx["missing_files"]+": "+", ".join(missing))
+
+elif page == "dashboard":
+    section_header(tx["dashboard_title"],tx["dashboard_sub"])
+    metrics()
+    st.caption(tx["method_note"])
+    if bass is not None and cols.get("pi"):
+        st.write("")
+        c1,c2=st.columns([1.3,1])
+        with c1:
+            st.markdown("### "+( "Tests by investigator" if en else "Ensayos por investigador"))
+            counts=bass[cols["pi"]].fillna("Unknown" if en else "Sin identificar").astype(str).value_counts()
+            fig=go.Figure(go.Bar(x=counts.values,y=counts.index,orientation="h",marker_color="#ff9d62"))
+            fig.update_layout(yaxis_title="",xaxis_title=("Tests" if en else "Ensayos"),height=335)
             show_plot(fig)
+        with c2:
+            st.markdown("### "+("Data provenance" if en else "Trazabilidad de datos"))
+            st.markdown(f'<div class="v6-progress"><strong>{escape(SRC_BASS2)}</strong><br>{escape(tx["method_note"])}</div>',unsafe_allow_html=True)
+            st.button("🚀 "+tx["go_explore"],on_click=go_to,args=("explorer",),use_container_width=True)
+            st.button("📚 "+tx["go_library"],on_click=go_to,args=("library",),use_container_width=True)
+    if missing: st.error(tx["missing_files"]+": "+", ".join(missing))
 
-            d1, d2, d3 = st.columns(3)
-            avg_i = round(ok[f"{var}_i_num"].dropna().mean(), 3) if ok[f"{var}_i_num"].notna().any() else "—"
-            avg_f = round(ok[f"{var}_f_num"].dropna().mean(), 3) if ok[f"{var}_f_num"].notna().any() else "—"
-            delta = round((ok[f"{var}_f_num"] - ok[f"{var}_i_num"]).dropna().mean(), 3) if (ok[f"{var}_f_num"] - ok[f"{var}_i_num"]).notna().any() else "—"
-            kpi(d1, "Promedio inicial", avg_i, var_labels[var][1])
-            kpi(d2, "Promedio final", avg_f, var_labels[var][1])
-            kpi(d3, "Δ promedio", delta, "final − inicial")
+elif page == "assistant":
+    section_header(tx["assistant_title"],tx["assistant_sub"])
+    st.warning(tx["assistant_status"])
+    st.markdown(f'<div class="v6-progress">{escape(tx["assistant_future"])}</div>',unsafe_allow_html=True)
+    a,b=st.columns(2)
+    a.button("📚 "+tx["go_library"],on_click=go_to,args=("library",),use_container_width=True)
+    b.button("📈 "+tx["go_explore"],on_click=go_to,args=("explorer",),use_container_width=True)
 
-            calc = ok[["_test_key"]].rename(columns={"_test_key": "Ensayo"}).copy()
-            calc["Inicial"] = ok[f"{var}_i_num"].values
-            calc["Final"] = ok[f"{var}_f_num"].values
-            calc["Diferencia (final − inicial)"] = (calc["Final"] - calc["Inicial"]).round(3)
-            st.markdown("#### Tabla de diferencias")
-            show_df(calc)
-            source_caption()
-            pills([("Dato medido", "green"), ("Diferencia calculada", "gold")])
-            st.download_button(
-                "⬇️ Descargar tabla filtrada (CSV)",
-                calc.to_csv(index=False).encode("utf-8"),
-                file_name=f"wari_bass2_{var}.csv",
-                mime="text/csv",
-            )
-
-    with tab_ficha:
-        t = st.selectbox("Selecciona un ensayo", f["_test_key"].tolist())
-        row = bass[bass["_test_key"] == t].iloc[0]
-        a, b, c = st.columns(3)
-        kpi(a, "Material", row[cols["material"]] if cols.get("material") else "—", "Muestra o material")
-        kpi(b, "Investigador", row[cols["pi"]] if cols.get("pi") else "—", "PI responsable")
-        kpi(c, "Fecha", row[cols["date"]] if cols.get("date") else "—", "Registro del ensayo")
-
-        st.markdown(f'<div class="card-soft"><h4 style="margin-top:0">Resumen del ensayo</h4><p>{escape(test_summary(row))}</p></div>', unsafe_allow_html=True)
-        rows = []
-        for v in ("O2", "CO2", "CO"):
-            if cols.get(f"{v}_i") and cols.get(f"{v}_f"):
-                a_num, b_num = row[f"{v}_i_num"], row[f"{v}_f_num"]
-                rows.append({
-                    "Variable": v,
-                    "Inicial (original)": row[cols[f"{v}_i"]],
-                    "Final (original)": row[cols[f"{v}_f"]],
-                    "Diferencia calculada": round(b_num - a_num, 3) if pd.notna(a_num) and pd.notna(b_num) else "No disponible",
-                })
-        show_df(pd.DataFrame(rows))
-        hall = qc[qc["Ensayo"] == row["_test"]] if not qc.empty else qc
-        if len(hall):
-            info_box("<b>Hallazgos de calidad detectados:</b> este ensayo contiene una o más alertas automáticas descriptivas. Revísalas antes de comunicar una conclusión.", "warn")
-            show_df(hall)
+elif page == "library":
+    section_header(tr["lib_title"],tr["lib_desc"])
+    if catalog is None:
+        unavailable_data()
+    else:
+        cat = localized_catalog(catalog)
+        a,b,c = st.columns([2,1,1])
+        query = a.text_input(tr["search"],placeholder=tr["search_example"])
+        areas = sorted(cat[tr["cat_area"]].dropna().unique())
+        area_sel = b.multiselect(tr["area"],areas,default=areas)
+        fuels = sorted(cat[tr["cat_fuel"]].dropna().unique())
+        fuel_sel = c.multiselect(tr["fuel"],fuels,default=fuels)
+        result = cat[cat[tr["cat_area"]].isin(area_sel)&cat[tr["cat_fuel"]].isin(fuel_sel)]
+        if query:
+            result = result[result.apply(lambda r: query.casefold() in " ".join(map(str,r.values)).casefold(),axis=1)]
+        a,b,c = st.columns(3)
+        kpi(a,tr["found"],len(result))
+        kpi(b,tr["areas"],len(area_sel))
+        kpi(c,tr["fuels"],len(fuel_sel))
+        if result.empty: st.info(tr["empty"])
         else:
-            info_box("No se detectaron alertas automáticas para este ensayo. Eso no equivale a validación científica completa.", "success")
-        source_caption()
+            show_df(result,column_config={tr["cat_source"]:st.column_config.LinkColumn(tr["cat_source"],display_text=tr["open_source"])})
+        source_caption(tr["source_catalog"])
 
-    with tab_qc:
-        info_box("<b>Importante:</b> los valores no se corrigen ni se eliminan. Las alertas ayudan a revisar el archivo, no a afirmar que existe un error físico real.", "warn")
-        if qc.empty:
-            info_box("No se detectaron hallazgos de calidad.", "success")
-        else:
-            motivos = sorted(qc["Alerta"].unique())
-            sel = st.multiselect("Filtrar por tipo de alerta", motivos, default=motivos)
-            qcf = qc[qc["Alerta"].isin(sel)]
-            c1, c2 = st.columns(2)
-            kpi(c1, "Alertas visibles", len(qcf), "Filtradas por usuario")
-            kpi(c2, "Tipos de alerta", len(sel), "Categorías activas")
-            show_df(qcf)
-            st.download_button(
-                "⬇️ Descargar hallazgos (CSV)",
-                qc.to_csv(index=False).encode("utf-8"),
-                file_name="wari_bass2_control_calidad.csv",
-                mime="text/csv",
-            )
-            source_caption()
-            pills([("Resultado calculado", "gold"), ("Dato no disponible", "gray")])
-
-    with tab_tabla:
-        original_cols = [str(c).strip() for c in pd.read_csv(BASS2_FILE, nrows=0).columns]
-        show_df(f[original_cols])
-        source_caption()
-        info_box("Esta tabla conserva la información original filtrada por investigador y material. Sirve para contrastar cualquier resumen con el archivo de base.", "note")
-
-# =============================================================================
-# COMPARACIÓN CIENTÍFICA
-# =============================================================================
-elif page.startswith("⚖️"):
-    section_header("Comparación científica", "Compara dos ensayos BASS-II lado a lado para identificar coincidencias, diferencias y límites de interpretación.")
-    info_box("<b>Regla de oro:</b> esta sección describe lo que está registrado en dos ensayos; no prueba causas ni jerarquiza materiales sin un análisis experimental adicional.", "note")
-
+elif page == "explorer":
+    section_header(tr["exp_title"],tr["exp_desc"])
+    st.info(tr["guide"])
     if bass is None:
-        info_box("No se encontró <code>data/bass_ii_experimental.csv</code>.", "danger")
+        unavailable_data()
         st.stop()
-
-    tests = bass["_test_key"].tolist()
-    c1, c2 = st.columns(2)
-    ta = c1.selectbox("Ensayo A", tests, index=0)
-    tb = c2.selectbox("Ensayo B", tests, index=min(1, len(tests)-1))
-    if ta == tb:
-        info_box("Elige dos ensayos distintos para comparar.", "warn")
+    with st.sidebar:
+        pis=sorted(bass[cols["pi"]].dropna().astype(str).unique()) if cols.get("pi") else []
+        pis_sel=st.multiselect(tr["pi"],pis,default=pis)
+        material_query=st.text_input(tr["material_filter"],placeholder=tr["material_hint"])
+    filtered = bass.copy()
+    if cols.get("pi"):
+        filtered=filtered[filtered[cols["pi"]].astype(str).isin(pis_sel)]
+    if material_query and cols.get("material"):
+        filtered=filtered[filtered[cols["material"]].astype(str).str.contains(material_query,case=False,na=False)]
+    if filtered.empty:
+        st.info(tr["empty"])
         st.stop()
-
-    ra = bass[bass["_test_key"] == ta].iloc[0]
-    rb = bass[bass["_test_key"] == tb].iloc[0]
-    original_cols = [str(c).strip() for c in pd.read_csv(BASS2_FILE, nrows=0).columns]
-
-    left, right = st.columns(2)
-    left.markdown(f'<div class="card-soft"><h4 style="margin-top:0">Ensayo A</h4><p>{escape(test_summary(ra))}</p></div>', unsafe_allow_html=True)
-    right.markdown(f'<div class="card-soft"><h4 style="margin-top:0">Ensayo B</h4><p>{escape(test_summary(rb))}</p></div>', unsafe_allow_html=True)
-
-    iguales, diferentes, faltan = [], [], []
-    tabla = []
-    for c in original_cols:
-        va, vb = ra[c], rb[c]
-        na, nb = pd.isna(va), pd.isna(vb)
-        if na or nb:
-            estado = "Falta dato"
-            faltan.append(c)
-        elif str(va).strip() == str(vb).strip():
-            estado = "Igual"
-            iguales.append(c)
+    a,b=st.columns(2)
+    kpi(a,tr["visible"],len(filtered))
+    kpi(b,tr["unique"],filtered["_test"].nunique())
+    tabs=st.tabs([tr["chart_tab"],tr["test_tab"],tr["quality_tab"],tr["raw_tab"]])
+    with tabs[0]:
+        var_names={"O2":tr["oxygen"],"CO2":tr["carbon_dioxide"],"CO":tr["carbon_monoxide"]}
+        avail=[v for v in ("O2","CO2","CO") if cols.get(f"{v}_i") and cols.get(f"{v}_f")]
+        if not avail:
+            st.error(tr["no_numbers"])
         else:
-            estado = "Diferente"
-            diferentes.append(c)
-        tabla.append({"Variable": c, f"A ({ta})": va, f"B ({tb})": vb, "Estado": estado})
+            gas=st.radio(tr["select_gas"],avail,format_func=lambda x:var_names[x],horizontal=True)
+            ids=filtered["_test_key"].tolist()
+            chosen=st.multiselect(tr["select_tests"],ids,default=ids[:min(8,len(ids))])
+            if len(chosen)>MAX_TESTS:
+                st.warning(tr["too_many"])
+                chosen=chosen[:MAX_TESTS]
+            sub=filtered[filtered["_test_key"].isin(chosen)].copy()
+            visible=sub.dropna(subset=[f"{gas}_i_num",f"{gas}_f_num"],how="all")
+            if visible.empty: st.info(tr["no_numbers"])
+            else:
+                fig=go.Figure()
+                fig.add_bar(x=visible["_test_key"],y=visible[f"{gas}_i_num"],name=tr["initial"],marker_color=CYAN)
+                fig.add_bar(x=visible["_test_key"],y=visible[f"{gas}_f_num"],name=tr["final"],marker_color=ORANGE)
+                fig.update_layout(barmode="group",title=f'{tr["plot_title"]}: {var_names[gas]}',xaxis_title=tr["test_axis"],yaxis_title=tr["co_unit"] if gas=="CO" else tr["gas_unit"])
+                show_plot(fig)
+                summary=pd.DataFrame({tr["test_axis"]:visible["_test_key"],tr["initial"]:visible[f"{gas}_i_num"],tr["final"]:visible[f"{gas}_f_num"]})
+                summary[tr["delta"]]=(summary[tr["final"]]-summary[tr["initial"]]).round(3)
+                st.markdown("#### "+tr["calc_title"])
+                show_df(summary)
+                st.caption(tr["caution"])
+                source_caption()
+                st.download_button(tr["download_data"],data=summary.to_csv(index=False).encode("utf-8-sig"),file_name=f"wari_{gas}_{'en' if en else 'es'}.csv",mime="text/csv")
+    with tabs[1]:
+        selected_test=st.selectbox(tr["select_test"],filtered["_test_key"].tolist())
+        row=filtered[filtered["_test_key"]==selected_test].iloc[0]
+        a,b,c=st.columns(3)
+        kpi(a,tr["material"],row[cols["material"]] if cols.get("material") else "—")
+        kpi(b,tr["pi"],row[cols["pi"]] if cols.get("pi") else "—")
+        kpi(c,tr["date"],row[cols["date"]] if cols.get("date") else "—")
+        details=[]
+        for gas in ("O2","CO2","CO"):
+            if cols.get(f"{gas}_i") and cols.get(f"{gas}_f"):
+                ai,bf=row[f"{gas}_i_num"],row[f"{gas}_f_num"]
+                details.append({tr["field"]:gas,tr["raw_i"]:row[cols[f"{gas}_i"]],tr["raw_f"]:row[cols[f"{gas}_f"]],tr["delta"]:round(bf-ai,3) if pd.notna(ai) and pd.notna(bf) else tr["missing"]})
+        show_df(pd.DataFrame(details))
+        subset=qc[qc["Ensayo"]==row["_test"]] if not qc.empty else qc
+        if not subset.empty:
+            st.warning(tr["quality_warning"])
+            show_df(local_qc(subset))
+        else: st.success(tr["quality_ok"])
+        st.caption(tr["fan_note"])
+        source_caption()
+    with tabs[2]:
+        st.info(tr["quality_intro"])
+        if not qc.empty:
+            flags=local_qc(qc)
+            kinds=sorted(flags[tr["alert_type"]].unique())
+            chosen_kinds=st.multiselect(tr["alert_type"],kinds,default=kinds)
+            subset=flags[flags[tr["alert_type"]].isin(chosen_kinds)]
+            kpi(st.columns(1)[0],tr["visible_alerts"],len(subset))
+            show_df(subset)
+            st.download_button(tr["download_alerts"],data=subset.to_csv(index=False).encode("utf-8-sig"),file_name="wari_quality_flags.csv",mime="text/csv")
+        source_caption()
+    with tabs[3]:
+        st.caption(tr["original_note"])
+        raw_cols=[c for c in pd.read_csv(BASS2_FILE,nrows=0).columns]
+        show_df(filtered[raw_cols])
+        source_caption()
 
-    c1, c2, c3 = st.columns(3)
-    kpi(c1, "Campos iguales", len(iguales), "Coinciden exactamente")
-    kpi(c2, "Campos diferentes", len(diferentes), "No tienen el mismo valor")
-    kpi(c3, "Campos incompletos", len(faltan), "Al menos un dato ausente")
-
-    show_df(pd.DataFrame(tabla))
+elif page == "compare":
+    section_header(tr["compare_title"],tr["compare_desc"])
+    if bass is None:
+        unavailable_data()
+        st.stop()
+    ids=bass["_test_key"].tolist()
+    a,b=st.columns(2)
+    ida=a.selectbox(tr["test_a"],ids,index=0)
+    idb=b.selectbox(tr["test_b"],ids,index=min(1,len(ids)-1))
+    if ida==idb:
+        st.warning(tr["different_tests"])
+        st.stop()
+    ra=bass[bass["_test_key"]==ida].iloc[0]
+    rb=bass[bass["_test_key"]==idb].iloc[0]
+    raw_cols=[c for c in pd.read_csv(BASS2_FILE,nrows=0).columns]
+    comparison=[];counts={"eq":0,"diff":0,"miss":0}
+    for col in raw_cols:
+        va,vb=ra[col],rb[col]
+        if pd.isna(va) or pd.isna(vb):state=tr["absent"];counts["miss"]+=1
+        elif str(va).strip()==str(vb).strip():state=tr["equal"];counts["eq"]+=1
+        else:state=tr["different"];counts["diff"]+=1
+        comparison.append({tr["field"]:col,tr["test_a"]:va,tr["test_b"]:vb,tr["status"]:state})
+    a,b,c=st.columns(3)
+    kpi(a,tr["same_count"],counts["eq"])
+    kpi(b,tr["different_count"],counts["diff"])
+    kpi(c,tr["missing_count"],counts["miss"])
+    show_df(pd.DataFrame(comparison))
+    st.markdown("#### "+tr["delta_comp"])
+    changes=[]
+    for gas in ("O2","CO2","CO"):
+        if cols.get(f"{gas}_i") and cols.get(f"{gas}_f"):
+            delta_a=ra[f"{gas}_f_num"]-ra[f"{gas}_i_num"]
+            delta_b=rb[f"{gas}_f_num"]-rb[f"{gas}_i_num"]
+            changes.append({tr["field"]:gas,tr["test_a"]:round(delta_a,3) if pd.notna(delta_a) else tr["missing"],tr["test_b"]:round(delta_b,3) if pd.notna(delta_b) else tr["missing"],"Δ B − Δ A":round(delta_b-delta_a,3) if pd.notna(delta_a) and pd.notna(delta_b) else tr["missing"]})
+    show_df(pd.DataFrame(changes))
+    a,b=st.columns(2)
+    with a:
+        st.success("**"+tr["allowed"]+"**\n\n"+tr["allowed_body"])
+    with b:
+        st.warning("**"+tr["not_allowed"]+"**\n\n"+tr["not_allowed_body"])
     source_caption()
 
-    st.markdown("#### Comparación numérica de cambios")
-    comp = []
-    for v in ("O2", "CO2", "CO"):
-        if cols.get(f"{v}_i") and cols.get(f"{v}_f"):
-            da = ra[f"{v}_f_num"] - ra[f"{v}_i_num"]
-            db = rb[f"{v}_f_num"] - rb[f"{v}_i_num"]
-            comp.append({
-                "Variable": v,
-                "Δ Ensayo A": round(da, 3) if pd.notna(da) else "No disponible",
-                "Δ Ensayo B": round(db, 3) if pd.notna(db) else "No disponible",
-                "Δ B − Δ A": round(db - da, 3) if pd.notna(da) and pd.notna(db) else "—",
-            })
-    comp_df = pd.DataFrame(comp)
-    show_df(comp_df)
-    pills([("Descripción comparativa", "cyan"), ("Operación aritmética", "gold")])
-
-    left, right = st.columns(2)
-    with left:
-        info_box("<b>Sí se puede concluir:</b><br>• qué variables están registradas en ambos ensayos;<br>• si un valor final es mayor o menor que el inicial;<br>• qué campos del CSV son iguales o diferentes.", "success")
-    with right:
-        info_box("<b>No se puede concluir directamente:</b><br>• qué material es más seguro en general;<br>• causalidad física solo por una diferencia numérica;<br>• comportamiento bajo gravedad lunar o marciana a partir de microgravedad.", "danger")
-
-# =============================================================================
-# SEGURIDAD ESPACIAL
-# =============================================================================
-elif page.startswith("🛰️"):
-    section_header("Seguridad espacial", "Conecta las investigaciones del catálogo con escenarios de aplicación, dejando claros los límites de extrapolación.")
-    esc = st.selectbox(
-        "Selecciona un escenario",
-        ["Estación espacial en órbita (microgravedad)", "Hábitat lunar", "Hábitat marciano"],
-    )
-    if esc.startswith("Estación"):
-        info_box("Este escenario es el más cercano a las condiciones de microgravedad usadas en varias investigaciones del catálogo.", "success")
+elif page == "space":
+    section_header(tr["space_title"],tr["space_desc"])
+    choices=["station","moon","mars"]
+    scenario=st.selectbox(tr["scene"],choices,format_func=lambda x:tr[x])
+    st.info(tr["scene_station"] if scenario=="station" else tr["scene_other"])
+    st.markdown("#### "+tr["relevance"])
+    if catalog is None: unavailable_data()
     else:
-        info_box("Los resultados de microgravedad no se transfieren de forma directa a gravedad lunar o marciana. Esta sección solo orienta qué estudios podrían servir como punto de partida.", "warn")
+        cat=localized_catalog(catalog)
+        for area in sorted(cat[tr["cat_area"]].dropna().unique()):
+            with st.expander(str(area),expanded=True):
+                sub=cat[cat[tr["cat_area"]]==area]
+                show_df(sub,column_config={tr["cat_source"]:st.column_config.LinkColumn(tr["cat_source"],display_text=tr["open_source"])})
+    st.markdown("#### "+tr["interpretation"])
+    a,b=st.columns(2)
+    a.success(tr["space_yes"])
+    b.warning(tr["space_no"])
 
-    if catalog is None:
-        info_box("No se encontró <code>data/investigaciones.csv</code>.", "danger")
-    else:
-        cards = st.columns(3)
-        for i, area in enumerate(sorted(catalog["area"].dropna().unique())):
-            sub = catalog[catalog["area"] == area]
-            cards[i % 3].markdown(
-                f'<div class="card-soft"><h4 style="margin-top:0">{escape(area)}</h4><p style="color:#d0deed">{len(sub)} investigación(es) asociadas a esta línea de seguridad.</p></div>',
-                unsafe_allow_html=True,
-            )
-        st.write("")
-        for area in sorted(catalog["area"].dropna().unique()):
-            with st.expander(f"{area}", expanded=True):
-                sub = catalog[catalog["area"] == area]
-                cfg = {"fuente": st.column_config.LinkColumn("fuente", display_text="Abrir fuente")} if "fuente" in sub.columns else {}
-                show_df(sub, column_config=cfg)
-
-    st.markdown("#### Lectura responsable")
-    a, b = st.columns(2)
-    with a:
-        info_box("<b>Útil para:</b><br>• identificar estudios por prevención, detección y supresión;<br>• elegir referencias para el pitch;<br>• justificar por qué el problema es relevante para la seguridad espacial.", "note")
-    with b:
-        info_box("<b>No sustituye:</b><br>• ensayos en gravedad lunar o marciana;<br>• certificaciones de materiales;<br>• modelos de predicción de incendios reales.", "danger")
-
-# =============================================================================
-# METODOLOGÍA
-# =============================================================================
-else:
-    section_header("Metodología y límites científicos", "Explica cómo se construyó la aplicación y cómo deben interpretarse sus resultados frente a un jurado o un usuario externo.")
-    c1, c2 = st.columns(2)
-    with c1:
-        st.markdown('<div class="card-soft"><h4 style="margin-top:0">¿Cómo funciona la app?</h4><ol style="color:#d0deed; line-height:1.75;"><li>Carga un catálogo de investigaciones y una tabla experimental BASS-II.</li><li>Detecta columnas relevantes de forma flexible.</li><li>Usa solo mediciones numéricas claras para cálculos.</li><li>Separa datos originales, operaciones y extrapolaciones.</li></ol></div>', unsafe_allow_html=True)
-    with c2:
-        st.markdown('<div class="card-soft"><h4 style="margin-top:0">¿Qué se corrigió en esta versión?</h4><ul style="color:#d0deed; line-height:1.75;"><li>Mejor jerarquía visual.</li><li>Más color y navegación más clara.</li><li>Explicaciones breves por módulo.</li><li>Resumen funcional para el jurado.</li></ul></div>', unsafe_allow_html=True)
-
-    st.markdown("#### Clasificación de resultados")
-    pills([
-        ("Dato experimental", "green"),
-        ("Resultado calculado", "gold"),
-        ("Interpretación", "cyan"),
-        ("Extrapolación", "violet"),
-        ("Dato no disponible", "gray"),
-    ])
-    st.write("")
-    info_box("<b>Dato experimental:</b> medición registrada en la fuente.<br><b>Resultado calculado:</b> operación como final − inicial.<br><b>Interpretación:</b> explicación respaldada por el registro.<br><b>Extrapolación:</b> aplicación tentativa a otro contexto.<br><b>Dato no disponible:</b> no pudo verificarse o no existe en el archivo.", "note")
-    info_box("<b>Reglas del tratamiento de datos:</b> no se imputan valores faltantes; no se convierten textos ambiguos en números; los atípicos se marcan pero no se eliminan; y los fan/air display no se leen como velocidad física sin calibración documentada.", "warn")
-    st.markdown("#### Fuentes base")
-    st.markdown(
-        "- NASA Physical Sciences Informatics (PSI)\n"
-        "- Tabla experimental BASS-II: <code>PSI-25_Experimental table_BASS-II.csv</code>\n"
-        "- Repositorio público del proyecto: <code>github.com/stevenlaime17-stack/wari-fire-ai</code>",
-        unsafe_allow_html=True,
-    )
-    st.caption("Equipo: Wari Teams · Ayacucho, Perú · NASA International Space Apps Challenge 2026")
+elif page == "method":
+    section_header(tr["method_title"],tr["method_desc"])
+    for code in ("method1","method2","method3","method4"):
+        with st.expander(tr[code],expanded=True):
+            st.write(tr[code+"d"])
+    st.info(tr["method_source"])
+    st.caption(tr["raw_note"])
+    st.markdown("https://github.com/stevenlaime17-stack/wari-fire-ai")
