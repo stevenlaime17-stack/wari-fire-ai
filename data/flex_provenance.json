@@ -1,0 +1,9 @@
+{
+  "source_type": "NASA PSI official API",
+  "retrieval_url": "https://psi.nasa.gov/geode-py/ws/studies/PSI-69/download",
+  "source_page": "https://psi.nasa.gov/physci/repo/data/investigations/PSI-69",
+  "doi": "10.60555/mbq8-0451",
+  "sha256": "37c88ce8ae9391b7544ff630a45ce87543d04d317cdbfbed104fe7d5c27e1b96",
+  "retrieved_utc": "2026-11-16T02:37:59.571938+00:00",
+  "official_checksum_compared": false
+}
