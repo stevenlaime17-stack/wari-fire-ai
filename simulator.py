@@ -63,6 +63,18 @@ T = {
   "question3":"¿Puede el dibujo del simulador predecir un incendio lunar?", "options3":["Sí, porque muestra una llama.","Sí, solo con seleccionar 30 % de oxígeno.","No, porque no incorpora un modelo validado para gravedad parcial."],
   "check":"Comprobar mis respuestas", "score":"Resultado del reto", "right":"¡Bien! Has diferenciado observaciones, explicaciones y extrapolaciones.", "retry":"Revisa las respuestas. Una imagen conceptual no sustituye las mediciones ni la validación científica.",
   "takeaway":"Lo que aprendiste", "takeaway_text":"El fuego necesita condiciones de combustión; la gravedad afecta el transporte de gases; NASA PSI permite estudiar registros reales, pero no garantiza la seguridad de un hábitat lunar.",
+  "media_tab":"🎞️ 5. Experimentos reales", "media_title":"Imágenes auténticas de investigaciones NASA",
+  "media_desc":"Compara una llama de vela en Tierra y microgravedad y observa una secuencia de combustión de un sólido en la estación espacial. Aquí las imágenes sí son de NASA; los dibujos de la pestaña Experimenta siguen siendo ilustrativos.",
+  "media_one":"Fotografía NASA: gravedad terrestre frente a microgravedad", "media_one_note":"Fotografía oficial de comparación de una vela en gravedad normal (izquierda) y microgravedad (derecha). No es una predicción generada por nuestro simulador.",
+  "media_two":"NASA SoFIE: evolución de una llama en microgravedad", "media_two_note":"Montaje real de una muestra de tela del experimento SoFIE. NASA señala que los fotogramas están separados 0,2 s; no son ensayos BASS-II ni mediciones del CSV de esta aplicación.",
+  "media_view":"Abrir recurso original NASA", "media_question":"Al comparar las imágenes reales, ¿qué interpretación es más responsable?",
+  "media_choices":["Todas las llamas en microgravedad deben ser esferas perfectas.","La forma puede cambiar al variar gravedad, material y circulación de gases.","Las fotografías permiten calcular la seguridad de una base lunar."],
+  "media_correct":"Bien: el comportamiento depende de múltiples factores. La gravedad altera la convección por flotabilidad, pero no es la única variable.",
+  "media_incorrect":"Revisa la diferencia entre una observación fotográfica y una predicción cuantitativa. La forma real depende también del combustible y del flujo.",
+  "media_button":"Comprobar respuesta", "media_bridge":"Conecta imágenes y datos: ahora abre Datos NASA y observa registros experimentales BASS-II. Las imágenes SoFIE y la foto de la vela son referencias educativas distintas del conjunto de datos BASS-II.",
+  "media_license":"Créditos: NASA. Uso educativo sujeto a las directrices oficiales de medios de NASA. WARI FIRE AI es un proyecto independiente, no respaldado ni certificado por NASA.",
+  "media_failure":"No se pudo mostrar la imagen externa. Abre la fuente original con el botón inferior.",
+  "media_more":"Más investigaciones para profundizar", "media_more_notes":["SoFIE estudia la inflamabilidad de materiales sólidos en microgravedad.","FLEX investiga la extinción de llamas de gotas de combustible líquido.","La biblioteca NASA PSI permite consultar datos y documentación científica."],
   "footer":"WARI Teams · NASA Space Apps Challenge 2026 · Herramienta educativa, no certificada para decisiones de seguridad.",
  },
  "en":{
@@ -100,6 +112,18 @@ T = {
   "question3":"Can the visualizer predict a lunar fire?", "options3":["Yes, because it displays a flame.","Yes, by setting oxygen to 30%.","No, because it lacks a validated partial-gravity model."],
   "check":"Check my answers", "score":"Challenge score", "right":"Great! You distinguished observations, explanations, and extrapolations.", "retry":"Review the answers. A conceptual image does not replace measurements or scientific validation.",
   "takeaway":"What you learned", "takeaway_text":"Fire requires combustion conditions; gravity changes gas transport; NASA PSI provides experimental evidence but does not certify lunar habitat safety.",
+  "media_tab":"🎞️ 5. Real experiments", "media_title":"Authentic NASA research imagery",
+  "media_desc":"Compare a candle flame on Earth and in microgravity, then examine a solid-fuel combustion image sequence from the space station. These are genuine NASA images; the scenes under Experiment remain illustrations.",
+  "media_one":"NASA photograph: Earth gravity versus microgravity", "media_one_note":"Official side-by-side photograph of a candle flame under normal gravity (left) and microgravity (right). It is not a prediction from our simulator.",
+  "media_two":"NASA SoFIE: flame evolution in microgravity", "media_two_note":"A real montage from the SoFIE fabric combustion experiment. NASA states that frames are 0.2 seconds apart. These are not BASS-II tests or measurements from this app's CSV.",
+  "media_view":"Open original NASA source", "media_question":"What is the most responsible interpretation of these real images?",
+  "media_choices":["Every microgravity flame must be a perfect sphere.","Flame shape may change with gravity, fuel, and gas flow.","These pictures determine whether a lunar habitat is fire-safe."],
+  "media_correct":"Good: behavior depends on many factors. Gravity affects buoyancy-driven convection, but it is not the only variable.",
+  "media_incorrect":"Distinguish visual observation from quantitative prediction. Real flame shape also depends on fuel and airflow.",
+  "media_button":"Check answer", "media_bridge":"Connect visuals and data: next open NASA Data and examine BASS-II experimental records. SoFIE images and the candle photo are educational references, not part of the BASS-II dataset.",
+  "media_license":"Credit: NASA. Educational use is subject to NASA's official media guidelines. WARI FIRE AI is an independent project, not endorsed or certified by NASA.",
+  "media_failure":"External image unavailable. Use the source button below to view it on NASA's website.",
+  "media_more":"Further scientific resources", "media_more_notes":["SoFIE examines flammability of solid materials in microgravity.","FLEX studies extinguishment of liquid fuel droplet flames.","NASA PSI provides research data and experiment documentation."],
   "footer":"WARI Teams · NASA Space Apps Challenge 2026 · Educational tool, not certified for safety decisions.",
  }
 }
@@ -186,7 +210,7 @@ def render_simulator(language):
     st.markdown(f'<div class="lab-banner"><span class="lab-tag">NASA Space Apps · Flame in Freefall</span><h2>🔥 {w["hero"]}</h2><p>{w["subtitle"]}</p></div>',unsafe_allow_html=True)
     st.caption(w["intro"])
     st.warning(w["warning"])
-    a,b,c,d=st.tabs(w["tabs"])
+    a,b,c,d,e=st.tabs(w["tabs"]+[w["media_tab"]])
 
     with a:
         st.subheader(w["learn_title"])
@@ -309,4 +333,59 @@ def render_simulator(language):
             else:st.warning(w["retry"])
         st.markdown("#### "+w["takeaway"])
         st.write(w["takeaway_text"])
+
+    with e:
+        st.subheader(w["media_title"])
+        st.write(w["media_desc"])
+        sources = [
+            {
+                "title": w["media_one"], "note": w["media_one_note"],
+                "image": "https://images-assets.nasa.gov/image/GRC-1998-C-00485/GRC-1998-C-00485~large.jpg",
+                "url": "https://science.nasa.gov/image-detail/amf-grc-1998-c-00485/",
+                "key": "photo"
+            },
+            {
+                "title": w["media_two"], "note": w["media_two_note"],
+                "image": "https://svs.gsfc.nasa.gov/vis/a030000/a031300/a031394/RTDFS_24303R1343C_Montage-0pt2-s-apart_1080p.png",
+                "url": "https://svs.gsfc.nasa.gov/31394/",
+                "key": "sofie"
+            },
+        ]
+        for item in sources:
+            with st.container(border=True):
+                st.markdown("#### " + item["title"])
+                try:
+                    st.image(item["image"], use_container_width=True)
+                except Exception:
+                    st.info(w["media_failure"])
+                st.caption(item["note"])
+                st.link_button("🔗 "+w["media_view"], item["url"])
+                st.caption("Credit / Crédito: NASA")
+
+        st.divider()
+        st.markdown("#### 🧠 "+w["media_question"])
+        ans=st.radio(w["media_question"], w["media_choices"], index=None,
+                     key="lab10_observation_answer", label_visibility="collapsed")
+        if st.button(w["media_button"],key="lab10_observation_check"):
+            if ans is None:
+                st.info(w["media_question"])
+            elif ans == w["media_choices"][1]:
+                st.success(w["media_correct"])
+            else:
+                st.warning(w["media_incorrect"])
+
+        st.info(w["media_bridge"])
+        st.markdown("#### 📖 "+w["media_more"])
+        official = [
+            ("NASA SoFIE", "https://www.nasa.gov/glenn/glenn-expertise-space-exploration/physical-sciences-program/combustion-science/solid-fuel-ignition-and-extinction-sofie/"),
+            ("NASA FLEX", "https://psi.nasa.gov/physci/repo/data/investigations/PSI-69"),
+            ("NASA PSI", NASA_URL),
+        ]
+        for (title, url), note in zip(official,w["media_more_notes"]):
+            with st.expander(title):
+                st.write(note)
+                st.link_button("🔗 "+w["media_view"],url)
+        st.caption(w["media_license"])
+        st.link_button("NASA Media Usage Guidelines", "https://www.nasa.gov/nasa-brand-center/images-and-media/")
+
     st.caption(w["footer"])
