@@ -16,6 +16,7 @@ from simulator import render_simulator
 from assistant_evidence import render_assistant
 from reports import render_reports
 from jury_demo import render_jury_demo
+from database_expansion import render_database_expansion
 
 # -----------------------------------------------------------------------------
 # Configuración general
@@ -584,6 +585,7 @@ with st.sidebar:
         ("home",tx["nav_home"]),
         ("dashboard",tx["dashboard"]),
         ("library","📚 "+tr["library"]),
+        ("database","🗃️ Atlas NASA PSI" if st.session_state.language == "Español" else "🗃️ NASA PSI Data Atlas"),
         ("explorer","📈 "+tr["explorer"]),
         ("compare","⚖️ "+tr["compare"]),
         ("simulator","🔥 Simulador educativo" if st.session_state.language == "Español" else "🔥 Educational Simulator"),
@@ -714,6 +716,9 @@ elif page == "dashboard":
             st.button("📚 "+tx["go_library"],on_click=go_to,args=("library",),use_container_width=True)
     if missing: st.error(tx["missing_files"]+": "+", ".join(missing))
 
+elif page == "database":
+    render_database_expansion(st.session_state.language)
+    
 elif page == "jury":
     render_jury_demo(bass,cols,st.session_state.language)
 
