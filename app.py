@@ -15,6 +15,7 @@ import streamlit as st
 from simulator import render_simulator
 from assistant_evidence import render_assistant
 from reports import render_reports
+from jury_demo import render_jury_demo
 
 # -----------------------------------------------------------------------------
 # Configuración general
@@ -589,6 +590,7 @@ with st.sidebar:
         ("space","🛰️ "+tr["space"]),
         ("assistant",tx["assistant"]),
         ("reports","📄 Informes científicos" if st.session_state.language=="Español" else "📄 Scientific reports"),
+        ("jury","🚀 Modo jurado" if st.session_state.language=="Español" else "🚀 Jury demo"),
         ("method","🧪 "+tr["method"]),
     ]
     labels = dict(OPTIONS)
@@ -711,6 +713,9 @@ elif page == "dashboard":
             st.button("🚀 "+tx["go_explore"],on_click=go_to,args=("explorer",),use_container_width=True)
             st.button("📚 "+tx["go_library"],on_click=go_to,args=("library",),use_container_width=True)
     if missing: st.error(tx["missing_files"]+": "+", ".join(missing))
+
+elif page == "jury":
+    render_jury_demo(bass,cols,st.session_state.language)
 
 elif page == "reports":
     render_reports(bass,cols,st.session_state.language)
