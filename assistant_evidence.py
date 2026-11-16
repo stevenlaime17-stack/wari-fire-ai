@@ -9,6 +9,7 @@ from html import escape
 
 import pandas as pd
 import streamlit as st
+from llm_optional import configured, explain
 
 NASAPSI = "https://www.nasa.gov/physical-sciences-informatics-psi/psi-investigations-by-research-area/"
 
@@ -66,7 +67,7 @@ def lookup(question, bass, cols, catalog, en):
                 v.append((i,f,(f-i) if i is not None and f is not None else None))
             label=('Ensayo' if not en else 'Test')
             parts=[f"**{'Comparación' if not en else 'Comparison'} {gas}: {ids[0]} / {ids[1]}**",
-                   f"| {label} | {'Inicial' if not en else 'Initial'} ({unit}) | {'Final' if not en else 'Final'} ({unit}) | Δ final − inicial ({unit}) |",
+                   f"| {label} | {'Inicial' if not en else 'Initial'} ({unit}) | {'Final' if not en else 'Final'} ({unit}) | Δ {'final − inicial' if not en else 'final − initial'} ({unit}) |",
                    '|---|---:|---:|---:|']
             for row,values in zip((a,b),v):
                 parts.append(f"| {row['_test']} | {_display(values[0])} | {_display(values[1])} | {_display(values[2])} |")
@@ -110,8 +111,15 @@ def lookup(question, bass, cols, catalog, en):
         rows=catalog[catalog['experimento'].str.upper()==key] if key else catalog
         text=("Los siguientes registros son descripciones de catálogo. **No son mediciones experimentales.**" if not en else
               "The following records are catalog descriptions, **not experimental measurements**.")
+        translations = {
+            'BASS': 'Investigates burning and suppression of solid materials in microgravity.',
+            'SAME': 'Studies smoke and aerosol characteristics in microgravity.',
+            'FLEX': 'Investigates extinguishment of liquid fuel droplet flames in microgravity.',
+        }
         for _,row in rows.iterrows():
-            text+=f"\n\n**{row['experimento']}** — {row['descripcion']}  \n[{'Fuente' if not en else 'Source'}]({row['fuente']})"
+            name = str(row['experimento']).upper()
+            summary = translations.get(name, 'Catalog description not yet translated; consult the original source.') if en else str(row['descripcion'])
+            text += f"\n\n**{row['experimento']}** — {summary}  \n[{'Fuente' if not en else 'Source'}]({row['fuente']})"
         return text,None
 
     if mention_gas and bass is not None:
@@ -133,40 +141,86 @@ def lookup(question, bass, cols, catalog, en):
 
 
 def _citation(en):
-    return (f"**{'Fuente' if not en else 'Source'}:** NASA PSI, `PSI-25_Experimental table_BASS-II.csv`, columna `Test #` para identificar filas. "
-            f"[{'Portal NASA PSI' if not en else 'NASA PSI portal'}]({NASAPSI}). "
+    return (f"**{'Fuente' if not en else 'Source'}:** NASA PSI, `PSI-25_Experimental table_BASS-II.csv`, "
+            + ('columna `Test #` para identificar filas. ' if not en else 'column `Test #` identifies rows. ')
+            + f"[{'Portal NASA PSI' if not en else 'NASA PSI portal'}]({NASAPSI}). "
             + ('La aplicación utiliza una copia local; no consulta NASA en tiempo real.' if not en else 'The app uses a local copy; it does not query NASA in real time.'))
 
 
 def render_assistant(bass, cols, catalog, language):
-    en=language=='English'
-    st.markdown('## 🤖 '+('Asistente WARI AI — Consultas verificables' if not en else 'WARI AI — Evidence-based queries'))
-    st.caption(('Haz preguntas sencillas sobre los datos de NASA PSI que tenemos cargados.' if not en else
-               'Ask simple questions about the NASA PSI data included with this project.'))
-    st.info(('**Versión inicial sin IA generativa:** las respuestas se construyen con búsquedas y cálculos reproducibles en el CSV. No requiere clave API, no consulta automáticamente todos los documentos NASA y no inventa resultados.' if not en else
-             '**Initial version without generative AI:** answers are built from reproducible CSV searches and calculations. No API key is required, and no unverified measurements are generated.'))
-    presets=(["¿Qué ensayos contienen PMMA?", "Compara B2 y B4 en O2", "¿Qué mediciones de CO2 hay?", "¿Qué estudia SAME?"] if not en else
-             ["Which tests contain PMMA?", "Compare B2 and B4 O2", "What CO2 measurements are available?", "What is SAME?"])
-    st.markdown('#### '+('Empieza con un ejemplo' if not en else 'Try an example'))
-    cc=st.columns(2)
-    selected=None
-    for i,p in enumerate(presets):
-        if cc[i%2].button(p,key='assistant_sample_'+str(i),use_container_width=True): selected=p
-    st.markdown('#### '+('Conversación' if not en else 'Conversation'))
-    if 'wari_chat' not in st.session_state:st.session_state.wari_chat=[]
-    for msg in st.session_state.wari_chat[-12:]:
+    en = language == 'English'
+    st.markdown('## 🤖 ' + ('Asistente WARI AI — Evidencia y explicación' if not en
+                             else 'WARI AI — Evidence and explanations'))
+    st.caption('Consulta nuestros registros BASS-II y su documentación, en tu idioma.' if not en
+               else 'Explore our BASS-II records and documentation in your own language.')
+
+    is_ready = configured(st.secrets)
+    choice = st.radio('Modo de respuesta' if not en else 'Response mode',
+        ['evidence', 'llm'] if is_ready else ['evidence'],
+        format_func=lambda opt: (
+            ('Datos verificables (sin IA generativa)' if not en else 'Verified data (no generative AI)')
+            if opt == 'evidence' else
+            ('Explicación con IA (experimental)' if not en else 'AI explanation (experimental)')),
+        horizontal=True, key='wari_response_mode')
+    if is_ready:
+        st.info('La IA remota está configurada. Solo interpreta los datos recuperados; verifica siempre las fuentes.' if not en
+                else 'Remote AI is configured. It only interprets retrieved data; always check source records.')
+    else:
+        st.info('Modo gratuito sin clave API: consultas reproducibles del CSV. La IA generativa se activará solo cuando el administrador configure un proveedor HTTPS compatible en Secrets.' if not en
+                else 'Free mode without API key: reproducible CSV lookups. Generative AI is enabled only if an administrator configures a compatible HTTPS provider in Secrets.')
+
+    presets = (["¿Qué ensayos contienen PMMA?", "Compara B2 y B4 en O2",
+                "¿Qué mediciones de CO2 hay?", "¿Qué estudia SAME?"] if not en else
+               ["Which tests contain PMMA?", "Compare B2 and B4 O2",
+                "What CO2 measurements are available?", "What is SAME?"])
+    st.markdown('#### ' + ('Prueba una pregunta' if not en else 'Try a question'))
+    cc = st.columns(2)
+    selected = None
+    for i, prompt in enumerate(presets):
+        if cc[i % 2].button(prompt, key='wari_example_' + str(i), use_container_width=True):
+            selected = prompt
+
+    # Do not display a previously generated Spanish answer when English is selected.
+    history_key = 'wari_chat_v11_en' if en else 'wari_chat_v11_es'
+    if history_key not in st.session_state:
+        st.session_state[history_key] = []
+    history = st.session_state[history_key]
+    st.markdown('#### ' + ('Conversación' if not en else 'Conversation'))
+    for msg in history[-14:]:
         with st.chat_message(msg['role']):
             st.markdown(msg['text'])
-    question=st.chat_input('Ej.: Compara B2 y B4 en O2' if not en else 'e.g. Compare B2 and B4 O2')
-    if selected:question=selected
+
+    question = st.chat_input('Ej.: Compara B2 y B4 en O2' if not en else 'e.g. Compare B2 and B4 O2',
+                             max_chars=500, key='wari_question_input')
+    if selected:
+        question = selected
     if question:
-        st.session_state.wari_chat.append({'role':'user','text':question})
-        result,records=lookup(question,bass,cols,catalog,en)
-        st.session_state.wari_chat.append({'role':'assistant','text':result})
+        question = str(question).strip()[:500]
+        history.append({'role': 'user', 'text': question})
+        result, records = lookup(question, bass, cols, catalog, en)
+        reply = result
+        if choice == 'llm' and is_ready:
+            # Only use well-founded retrieved results, not a generic fallback answer.
+            if records is not None or any(x in normalize(question) for x in ('same', 'flex', 'bass')):
+                try:
+                    if st.session_state.get('wari_llm_requests', 0) >= 8:
+                        raise RuntimeError('session limit')
+                    st.session_state.wari_llm_requests = st.session_state.get('wari_llm_requests', 0) + 1
+                    with st.spinner('Explicando evidencia...' if not en else 'Explaining evidence...'):
+                        generated = explain(question, result, language, st.secrets)
+                    reply = (('**Explicación de IA (revisar):**' if not en else '**AI explanation (review):**')
+                             + '\n\n' + generated + '\n\n---\n'
+                             + ('**Evidencia recuperada:**' if not en else '**Retrieved evidence:**')
+                             + '\n\n' + result)
+                except (RuntimeError, ValueError):
+                    reply = (('No fue posible obtener una respuesta remota. Se muestran los datos originales.' if not en
+                              else 'The remote response is unavailable. Showing original evidence instead.')
+                             + '\n\n' + result)
+        history.append({'role': 'assistant', 'text': reply})
         st.rerun()
-    if st.session_state.wari_chat:
-        if st.button('🧹 '+('Borrar conversación' if not en else 'Clear conversation')):
-            st.session_state.wari_chat=[]
-            st.rerun()
-    st.caption(('Alcance: búsqueda documental inicial y análisis descriptivo. Para preguntas abiertas con IA generativa necesitaremos integrar y evaluar un modelo accesible desde Streamlit Cloud.' if not en else
-                'Scope: initial retrieval and descriptive analysis. Open-ended generative answers require a separately integrated and tested model accessible from Streamlit Cloud.'))
+
+    if history and st.button('🧹 ' + ('Borrar conversación' if not en else 'Clear conversation')):
+        st.session_state[history_key] = []
+        st.rerun()
+    st.caption('Fuente de referencia: NASA PSI; copia local de BASS-II. Sin predicciones certificadas.' if not en
+               else 'Reference source: NASA PSI; local BASS-II copy. No certified predictions.')
