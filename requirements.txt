@@ -2,3 +2,4 @@ streamlit>=1.40,<2
 pandas>=2.0,<4
 plotly>=5,<8
 reportlab>=4.0,<5
+requests>=2.31,<3
