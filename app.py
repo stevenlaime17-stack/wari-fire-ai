@@ -13,6 +13,7 @@ import pandas as pd
 import plotly.graph_objects as go
 import streamlit as st
 from simulator import render_simulator
+from assistant_evidence import render_assistant
 
 # -----------------------------------------------------------------------------
 # Configuración general
@@ -710,12 +711,7 @@ elif page == "dashboard":
     if missing: st.error(tx["missing_files"]+": "+", ".join(missing))
 
 elif page == "assistant":
-    section_header(tx["assistant_title"],tx["assistant_sub"])
-    st.warning(tx["assistant_status"])
-    st.markdown(f'<div class="v6-progress">{escape(tx["assistant_future"])}</div>',unsafe_allow_html=True)
-    a,b=st.columns(2)
-    a.button("📚 "+tx["go_library"],on_click=go_to,args=("library",),use_container_width=True)
-    b.button("📈 "+tx["go_explore"],on_click=go_to,args=("explorer",),use_container_width=True)
+    render_assistant(bass, cols, catalog, st.session_state.language)
 
 elif page == "library":
     section_header(tr["lib_title"],tr["lib_desc"])
