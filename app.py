@@ -16,6 +16,7 @@ from reports import render_reports
 from jury_demo import render_jury_demo
 from database_expansion import render_database_expansion
 from expanded_experiments import render_expanded_experiments
+from multi_study import render_multi_study, local_counts
 
 BASE = Path(__file__).resolve().parent
 DATA = BASE / "data"
@@ -85,7 +86,7 @@ div[data-testid="stLinkButton"] a:hover{background:#245f87!important;border-colo
 LANG = {
  "Español": {
   "nav":"Navegación","home":"🏠 Página de inicio","dash":"📊 Panel general",
-  "library":"📚 Biblioteca NASA","atlas":"🗃️ Atlas NASA PSI","expanded":"🧬 Experimentos ampliados",
+  "library":"📚 Biblioteca NASA","atlas":"🗃️ Atlas NASA PSI","expanded":"🧬 Experimentos ampliados","more":"🧪 Más experimentos NASA",
   "explorer":"📈 Explorador BASS-II","compare":"⚖️ Comparación científica",
   "sim":"🔥 Simulador educativo","space":"🛰️ Seguridad espacial",
   "assistant":"🤖 Asistente WARI AI","reports":"📄 Informes científicos",
@@ -112,7 +113,7 @@ LANG = {
  },
  "English": {
   "nav":"Navigation","home":"🏠 Home","dash":"📊 Dashboard",
-  "library":"📚 NASA Library","atlas":"🗃️ NASA PSI Data Atlas","expanded":"🧬 Expanded experiments",
+  "library":"📚 NASA Library","atlas":"🗃️ NASA PSI Data Atlas","expanded":"🧬 Expanded experiments","more":"🧪 More NASA experiments",
   "explorer":"📈 BASS-II Explorer","compare":"⚖️ Scientific Comparison",
   "sim":"🔥 Educational Simulator","space":"🛰️ Space Fire Safety",
   "assistant":"🤖 WARI AI Assistant","reports":"📄 Scientific Reports",
@@ -295,7 +296,7 @@ with st.sidebar:
     nav = {
         "home": t["home"], "dashboard": t["dash"], "library": t["library"],
         "database": t["atlas"],
-        "expanded":t["expanded"], "explorer": t["explorer"], "compare": t["compare"],
+        "expanded":t["expanded"], "more":t["more"], "explorer": t["explorer"], "compare": t["compare"],
         "simulator": t["sim"], "space": t["space"], "assistant": t["assistant"],
         "reports": t["reports"], "jury": t["jury"], "method": t["method"],
     }
@@ -315,11 +316,24 @@ def jump(section):
 
 
 def metrics():
+    # All totals refer to locally installed *source rows*, never invented experiments.
+    bass_rows = len(bass) if bass is not None else 0
+    flex_rows = 0
+    try:
+        from expanded_experiments import _load_local
+        _, flex_df, _ = _load_local()
+        if flex_df is not None:
+            flex_rows = len(flex_df)
+    except (OSError, ValueError, pd.errors.ParserError):
+        pass
+    extra_counts = local_counts()
+    total_rows = bass_rows + flex_rows + sum(extra_counts.values())
+    families = int(bass_rows > 0) + int(flex_rows > 0) + sum(int(x > 0) for x in extra_counts.values())
     a, b, c, d = st.columns(4)
     textmetric(a, t["cat"], len(catalog) if catalog is not None else "—")
-    textmetric(b, t["tests"], len(bass) if bass is not None else "—")
-    textmetric(c, t["pis"], bass[cols["pi"]].nunique() if bass is not None and cols.get("pi") else "—")
-    textmetric(d, t["flags"], len(qc))
+    textmetric(b, "Filas locales / Local rows", total_rows)
+    textmetric(c, "Familias con datos / Data families", families)
+    textmetric(d, t["flags"] + " (BASS-II)", len(qc))
 
 
 if page == "home":
@@ -332,7 +346,7 @@ if page == "home":
     metrics()
     st.caption("NASA PSI · Local curated inventory; other catalog studies are metadata-only.")
     st.subheader(t["modules"])
-    items = [("expanded", "🧬"), ("database", "NASA PSI"), ("explorer", "BASS-II"),
+    items = [("more", "🧪"), ("expanded", "🧬"), ("database", "NASA PSI"), ("explorer", "BASS-II"),
              ("simulator", "🔥"), ("reports", "PDF"),
              ("assistant", "🤖"), ("jury", "🚀")]
     for offset in (0, 3, 6):
@@ -382,6 +396,9 @@ elif page == "database":
 
 elif page == "expanded":
     render_expanded_experiments(language)
+
+elif page == "more":
+    render_multi_study(language)
 
 elif page == "explorer":
     st.title(t["explorer"])
