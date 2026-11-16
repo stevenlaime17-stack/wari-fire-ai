@@ -508,13 +508,9 @@ I18N = {
 }
 }
 
-AREA_EN = {"Prevención":"Prevention", "Detección":"Detection", "Supresión":"Suppression"}
-FUEL_EN = {"Sólidos":"Solids", "Líquidos":"Liquids", "Aerosoles":"Aerosols"}
-DESC_EN = {
-  "BASS":"Solid-material burning and suppression in microgravity.",
-  "SAME":"Smoke and aerosol measurements in microgravity.",
-  "FLEX":"Liquid-fuel droplet flame extinction studies."
-}
+AREA_EN = {"Prevención":"Prevention", "Detección":"Detection", "Supresión":"Suppression", "Combustibles sólidos":"Solid fuels", "Combustión gaseosa":"Gas-phase combustion", "Llamas frías":"Cool flames", "Seguridad espacial":"Spacecraft safety"}
+FUEL_EN = {"Sólidos":"Solids", "Líquidos":"Liquids", "Aerosoles":"Aerosols", "Gases":"Gases"}
+DESC_EN = {'ACME BRE': 'Gas-phase combustion study using the Burning Rate Emulator experiment.', 'ACME E-FIELD Flames': 'Studies the influence of electric fields on flames.', 'ACME S-Flames': 'Studies the structure and response of spherical diffusion flames.', 'BASS': 'Burning and suppression of solid materials in microgravity.', 'BASS-II': 'Solid combustion tests; 129 original experimental rows integrated.', 'CFI': 'Cool Flames Investigation.', 'DAFT': 'Dust and Aerosol Measurement Feasibility Test.', 'DAFT-2': 'Second Dust and Aerosol Measurement Feasibility Test.', 'FLEX': 'Flame extinction experiments involving fuel droplets.', 'FLEX-2': 'Second Flame Extinguishment Experiment campaign.', 'SAFFIRE-I': 'Spacecraft Fire Experiment, first campaign.', 'SAFFIRE-II': 'Spacecraft Fire Experiment, second campaign.', 'SAFFIRE-III': 'Spacecraft Fire Experiment, third campaign.', 'SAME': 'Studies smoke aerosol characteristics and measurement.', 'SAME-R': 'Smoke Aerosol Measurement Experiment reflight.', 'SLICE': 'Structure and Liftoff in Combustion Experiment.', 'SPICE': 'Smoke Point in Coflow Experiment.'}
 
 # Navigation and language state
 if "language" not in st.session_state:
@@ -585,7 +581,7 @@ with st.sidebar:
         ("home",tx["nav_home"]),
         ("dashboard",tx["dashboard"]),
         ("library","📚 "+tr["library"]),
-        ("database","🗃️ Atlas NASA PSI" if st.session_state.language == "Español" else "🗃️ NASA PSI Data Atlas"),
+        ("database","🗃️ Atlas NASA PSI" if st.session_state.language=="Español" else "🗃️ NASA PSI Data Atlas"),
         ("explorer","📈 "+tr["explorer"]),
         ("compare","⚖️ "+tr["compare"]),
         ("simulator","🔥 Simulador educativo" if st.session_state.language == "Español" else "🔥 Educational Simulator"),
@@ -718,7 +714,7 @@ elif page == "dashboard":
 
 elif page == "database":
     render_database_expansion(st.session_state.language)
-    
+
 elif page == "jury":
     render_jury_demo(bass,cols,st.session_state.language)
 
