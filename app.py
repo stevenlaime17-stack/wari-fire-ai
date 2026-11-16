@@ -359,7 +359,7 @@ def parse_number(value):
 
 
 @st.cache_data(show_spinner=False)
-def load_catalog():
+def load_catalog(file_version):
     if not CATALOG_FILE.exists():
         return None
     df = pd.read_csv(CATALOG_FILE)
@@ -461,7 +461,11 @@ def test_summary(row):
 # -----------------------------------------------------------------------------
 # Data load
 # -----------------------------------------------------------------------------
-catalog = load_catalog()
+
+catalog = load_catalog(
+    CATALOG_FILE.stat().st_mtime_ns
+    if CATALOG_FILE.exists() else 0
+)
 bass, cols = load_bass2()
 qc = quality_report(bass, cols) if bass is not None else pd.DataFrame()
 
