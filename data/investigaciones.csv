@@ -1,5 +1,19 @@
 
 experimento,area,combustible,descripcion,fuente
-BASS,Prevención,Sólidos,Combustión y supresión de materiales sólidos en microgravedad,https://www.nasa.gov/wp-content/uploads/2025/07/burning-and-suppression-of-solids-bass.pdf
-SAME,Detección,Aerosoles,Caracterización de partículas de humo en microgravedad,https://www.nasa.gov/physical-sciences-informatics-psi/psi-investigations-by-research-area/
-FLEX,Supresión,Líquidos,Estudio de extinción de llamas de gotas combustibles,https://www.nasa.gov/physical-sciences-informatics-psi/psi-investigations-by-research-area/
+ACME BRE,Combustión gaseosa,Gases,Estudia la combustión de gases mediante el experimento Burning Rate Emulator.,https://www.nasa.gov/physical-sciences-informatics-psi/psi-investigations-by-research-area/
+ACME E-FIELD Flames,Combustión gaseosa,Gases,Investiga la influencia de campos eléctricos sobre llamas.,https://www.nasa.gov/physical-sciences-informatics-psi/psi-investigations-by-research-area/
+ACME S-Flames,Combustión gaseosa,Gases,Estudia la estructura y respuesta de llamas de difusión esféricas.,https://www.nasa.gov/physical-sciences-informatics-psi/psi-investigations-by-research-area/
+BASS,Combustibles sólidos,Sólidos,Combustión y supresión de materiales sólidos en microgravedad.,https://www.nasa.gov/physical-sciences-informatics-psi/psi-investigations-by-research-area/
+BASS-II,Combustibles sólidos,Sólidos,Ensayos experimentales de combustión de sólidos; 129 filas originales integradas.,https://psi.nasa.gov/physci/repo/data/investigations/PSI-25
+CFI,Llamas frías,Gases,Investigación de llamas frías.,https://www.nasa.gov/physical-sciences-informatics-psi/psi-investigations-by-research-area/
+DAFT,Detección,Aerosoles,Evaluación de medición de polvo y aerosoles.,https://www.nasa.gov/physical-sciences-informatics-psi/psi-investigations-by-research-area/
+DAFT-2,Detección,Aerosoles,Segunda investigación de factibilidad de medición de polvo y aerosoles.,https://www.nasa.gov/physical-sciences-informatics-psi/psi-investigations-by-research-area/
+FLEX,Supresión,Líquidos,Experimentos de extinción de llamas en gotas de combustible.,https://www.nasa.gov/physical-sciences-informatics-psi/psi-investigations-by-research-area/
+FLEX-2,Supresión,Líquidos,Segunda campaña del experimento de extinción de llamas.,https://www.nasa.gov/physical-sciences-informatics-psi/psi-investigations-by-research-area/
+SAFFIRE-I,Seguridad espacial,Sólidos,"Experimento de incendios de naves espaciales, primera campaña.",https://www.nasa.gov/physical-sciences-informatics-psi/psi-investigations-by-research-area/
+SAFFIRE-II,Seguridad espacial,Sólidos,"Experimento de incendios de naves espaciales, segunda campaña.",https://www.nasa.gov/physical-sciences-informatics-psi/psi-investigations-by-research-area/
+SAFFIRE-III,Seguridad espacial,Sólidos,"Experimento de incendios de naves espaciales, tercera campaña.",https://www.nasa.gov/physical-sciences-informatics-psi/psi-investigations-by-research-area/
+SAME,Detección,Aerosoles,Estudia características de aerosoles de humo y su medición.,https://www.nasa.gov/physical-sciences-informatics-psi/psi-investigations-by-research-area/
+SAME-R,Detección,Aerosoles,Repetición del experimento de medición de aerosoles de humo.,https://www.nasa.gov/physical-sciences-informatics-psi/psi-investigations-by-research-area/
+SLICE,Combustión gaseosa,Gases,Investiga estructura y elevación de llamas en combustión.,https://www.nasa.gov/physical-sciences-informatics-psi/psi-investigations-by-research-area/
+SPICE,Combustión gaseosa,Gases,Investiga el punto de producción de humo en llamas con flujo coaxial.,https://www.nasa.gov/physical-sciences-informatics-psi/psi-investigations-by-research-area/
